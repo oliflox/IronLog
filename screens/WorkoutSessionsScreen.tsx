@@ -1,12 +1,13 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
-import { WorkoutDay, workoutDaysByProgram } from "../mock/workoutDays";
-import { workoutDaysStyles } from "../styles/workoutDays";
+import { Sessions, WorkoutDay } from "../mock/Sessions";
+import { sessionsStyles } from "../styles/sessions";
 
 type RootStackParamList = {
   Workout: undefined;
   WorkoutDays: { programId: string };
+  WorkoutExercises: { sessionId: string };
   Profil: undefined;
   Timer: undefined;
   Calendar: undefined;
@@ -16,25 +17,25 @@ type Props = NativeStackScreenProps<RootStackParamList, "WorkoutDays">;
 
 const WorkoutDaysScreen = ({ route, navigation }: Props) => {
   const { programId } = route.params;
-  const workoutDays = workoutDaysByProgram[programId] || [];
+  const workoutDays = Sessions[programId] || [];
 
   const renderWorkoutDay = ({ item }: { item: WorkoutDay }) => (
     <Pressable 
       style={({ pressed }) => [
-        workoutDaysStyles.workoutDayItem,
+        sessionsStyles.workoutDayItem,
         pressed && { opacity: 0.7 }
       ]}
       onPress={() => {
-        console.log('Navigate to exercises for day:', item.day);
+        navigation.navigate('WorkoutExercises', { sessionId: item.id });
       }}
     >
-        <Text style={workoutDaysStyles.workoutDayTitle}>{item.day}</Text>
+        <Text style={sessionsStyles.workoutDayTitle}>{item.day}</Text>
     </Pressable>
   );
 
   return (
-    <View style={workoutDaysStyles.container}>
-      <Text style={workoutDaysStyles.title}>{workoutDays[0].muscleGroup}</Text>
+    <View style={sessionsStyles.container}>
+      <Text style={sessionsStyles.title}>{workoutDays[0].muscleGroup}</Text>
       <FlatList
         data={workoutDays}
         renderItem={renderWorkoutDay}

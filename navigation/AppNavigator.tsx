@@ -7,13 +7,15 @@ import { Pressable } from 'react-native';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TimerScreen from '../screens/TimerScreen';
-import WorkoutDaysScreen from '../screens/WorkoutDaysScreen';
+import WorkoutExercises from '../screens/WorkoutExercises';
 import WorkoutScreen from '../screens/WorkoutScreen';
+import WorkoutDaysScreen from '../screens/WorkoutSessionsScreen';
 import { navigationStyles } from '../styles/navigation';
 
 type RootStackParamList = {
   Main: undefined;
   WorkoutDays: { programId: string };
+  WorkoutExercises: { sessionId: string };
 };
 
 type RootTabParamList = {
@@ -92,7 +94,16 @@ const AppNavigator = () => {
         options={{
           headerShown: true,
           title: 'Programme d\'entraînement',
-          headerBackTitle: 'Retour',
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen 
+        name="WorkoutExercises" 
+        component={WorkoutExercises}
+        options={{
+          headerShown: true,
+          title: 'Exercices',
+          headerBackTitle: '',
         }}
       />
     </Stack.Navigator>

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { theme } from './theme';
 
-export const workoutDaysStyles = StyleSheet.create({
+export const sessionsStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -41,5 +41,11 @@ export const workoutDaysStyles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.text,
     marginBottom: theme.spacing.xs,
+  },
+  workoutDayImage: {
+    width: 100,
+    height: 100,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.sm,
   },
 }); 

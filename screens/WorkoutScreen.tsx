@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { FlatList, Text, View } from "react-native";
 
-import { WorkoutListItem } from "../components/WorkoutListItem";
+import { WorkoutList } from "../components/WorkoutList";
 import { mockWorkouts } from "../mock/workouts";
 import { workoutStyles } from "../styles/workout";
 
@@ -21,7 +21,7 @@ const WorkoutScreen = ({ navigation }: Props) => {
       <Text style={workoutStyles.title}>Workouts</Text>
       <FlatList
         data={mockWorkouts}
-        renderItem={({ item }) => <WorkoutListItem item={item} />}
+        renderItem={({ item }) => <WorkoutList item={item} />}
         keyExtractor={(item) => item.id}
       />
     </View>

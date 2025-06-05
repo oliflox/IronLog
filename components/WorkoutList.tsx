@@ -12,11 +12,11 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface WorkoutListItemProps {
+interface WorkoutListProps {
   item: Workout;
 }
 
-export const WorkoutListItem: React.FC<WorkoutListItemProps> = ({ item }) => {
+export const WorkoutList: React.FC<WorkoutListProps> = ({ item }) => {
   const navigation = useNavigation<NavigationProp>();
 
   return (

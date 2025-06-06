@@ -5,6 +5,7 @@ import React from 'react';
 import { Pressable } from 'react-native';
 
 import CalendarScreen from '../screens/CalendarScreen';
+import ExerciseHistoryScreen from '../screens/ExerciseHistoryScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TimerScreen from '../screens/TimerScreen';
 import WorkoutExercises from '../screens/WorkoutExercises';
@@ -16,6 +17,21 @@ type RootStackParamList = {
   Main: undefined;
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
+  ExerciseHistory: {
+    exercise: {
+      id: string;
+      name: string;
+      imageUrl: string;
+      history: {
+        date: string;
+        sets: {
+          id: string;
+          repetitions: number;
+          weight: number;
+        }[];
+      }[];
+    };
+  };
 };
 
 type RootTabParamList = {
@@ -105,6 +121,15 @@ const AppNavigator = () => {
         options={{
           headerShown: true,
           title: 'Exercices',
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen 
+        name="ExerciseHistory" 
+        component={ExerciseHistoryScreen}
+        options={{
+          headerShown: true,
+          title: 'Historique',
           headerBackTitle: '',
         }}
       />

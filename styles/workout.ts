@@ -2,12 +2,12 @@ import { StyleSheet } from 'react-native';
 import { theme } from './theme';
 
 export const workoutStyles = StyleSheet.create({
-  container: {
+  workoutContainer: {
     flex: 1,
     backgroundColor: theme.colors.background,
     padding: theme.spacing.md,
   },
-  title: {
+  workoutTitle: {
     fontSize: theme.typography.fontSize.xxl,
     fontFamily: theme.typography.fontFamily.bold,
     marginBottom: theme.spacing.md,
@@ -32,4 +32,10 @@ export const workoutStyles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text,
   },
+  sessionName: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text,
+    padding: theme.spacing.sm,
+  },
+
 }); 

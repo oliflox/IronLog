@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Sessions, WorkoutDay } from "../mock/Sessions";
-import { sessionsStyles } from "../styles/sessions";
+import { workoutStyles } from "../styles/workout";
 
 type RootStackParamList = {
   Workout: undefined;
@@ -22,20 +22,20 @@ const WorkoutDaysScreen = ({ route, navigation }: Props) => {
   const renderWorkoutDay = ({ item }: { item: WorkoutDay }) => (
     <Pressable 
       style={({ pressed }) => [
-        sessionsStyles.workoutDayItem,
+        workoutStyles.workoutItem,
         pressed && { opacity: 0.7 }
       ]}
       onPress={() => {
         navigation.navigate('WorkoutExercises', { sessionId: item.id });
       }}
     >
-        <Text style={sessionsStyles.workoutDayTitle}>{item.day}</Text>
+        <Text style={workoutStyles.sessionName}>{item.day}</Text>
     </Pressable>
   );
 
   return (
-    <View style={sessionsStyles.container}>
-      <Text style={sessionsStyles.title}>{workoutDays[0].muscleGroup}</Text>
+    <View style={workoutStyles.workoutContainer}>
+      <Text style={workoutStyles.workoutTitle}>{workoutDays[0].muscleGroup}</Text>
       <FlatList
         data={workoutDays}
         renderItem={renderWorkoutDay}

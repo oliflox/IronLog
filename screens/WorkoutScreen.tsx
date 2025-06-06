@@ -17,8 +17,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
 const WorkoutScreen = ({ navigation }: Props) => {
   return (
-    <View style={workoutStyles.container}>
-      <Text style={workoutStyles.title}>Workouts</Text>
+    <View style={workoutStyles.workoutContainer}>
+      <Text style={workoutStyles.workoutTitle}>Workouts</Text>
       <FlatList
         data={mockWorkouts}
         renderItem={({ item }) => <WorkoutList item={item} />}

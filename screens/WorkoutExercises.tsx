@@ -1,26 +1,15 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import ExerciseList from '../components/ExerciseList';
 import { exercises } from '../mock/exercises';
+import { workoutStyles } from '../styles/workout';
 
 const WorkoutExercises: React.FC = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <View style={workoutStyles.workoutContainer}>
         <ExerciseList exercises={exercises} />
       </View>
-    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  content: {
-    flex: 1,
-  },
-});
 
 export default WorkoutExercises; 

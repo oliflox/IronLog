@@ -10,7 +10,7 @@ import TimerScreen from '../screens/TimerScreen';
 import WorkoutExercises from '../screens/WorkoutExercises';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import WorkoutDaysScreen from '../screens/WorkoutSessionsScreen';
-import { navigationStyles } from '../styles/navigation';
+import { navigationOptions, navigationStyles } from '../styles/navigation';
 
 type RootStackParamList = {
   Main: undefined;
@@ -86,14 +86,16 @@ const EmptyScreen = () => null;
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator 
+      screenOptions={navigationOptions}
+    >
       <Stack.Screen name="Main" component={TabNavigator} />
-      <Stack.Screen 
+      <Stack.Screen
         name="WorkoutDays" 
         component={WorkoutDaysScreen}
         options={{
           headerShown: true,
-          title: 'Programme d\'entraînement',
+          title: 'Sessions d\'entraînement',
           headerBackTitle: '',
         }}
       />

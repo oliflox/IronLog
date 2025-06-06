@@ -16,4 +16,22 @@ export const navigationStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-}); 
+  header: {
+    backgroundColor: '#fff',
+  },
+  headerTitle: {
+    fontWeight: 'bold' as const,
+  },
+});
+
+export const navigationOptions = {
+  headerShown: false,
+  headerBackTitle: '',
+  headerTintColor: '#BA181B',
+  headerStyle: {
+    backgroundColor: '#fff',
+  },
+  headerTitleStyle: {
+    fontWeight: 'bold' as const,
+  },
+}; 

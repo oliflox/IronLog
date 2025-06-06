@@ -4,7 +4,7 @@ import { theme } from './theme';
 export const workoutStyles = StyleSheet.create({
   workoutContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.mainBg,
     padding: theme.spacing.md,
   },
   workoutTitle: {
@@ -18,7 +18,7 @@ export const workoutStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.md,
     padding: theme.spacing.sm,
-    backgroundColor: theme.colors.tertiary,
+    backgroundColor: theme.colors.itemBg,
     borderRadius: theme.borderRadius.lg
   },
   workoutImage: {

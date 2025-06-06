@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { theme } from './theme';
 
 export const navigationStyles = StyleSheet.create({
   tabBar: {
@@ -7,20 +8,14 @@ export const navigationStyles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 25,
     right: 10,
-    backgroundColor: '#BA181B',
+    backgroundColor: theme.colors.primary,
     width: 60,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    backgroundColor: '#fff',
-  },
-  headerTitle: {
-    fontWeight: 'bold' as const,
   },
 });
 

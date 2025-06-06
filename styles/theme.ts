@@ -4,11 +4,17 @@ const { width, height } = Dimensions.get('window');
 
 export const theme = {
   colors: {
-    primary: '#BA181B',
+    mainBg: '#1C1C1E',
+    itemBg: '#2C2C2E',
+
+    primary: '#D72638',
     secondary: '#A4161A',
     tertiary: '#660708',
-    background: '#161A1D',
-    text: '#FFFFFF',
+
+    text: '#fff',
+    textSecondary: '#CCCCCC',
+
+    accent: '#3A3A3C',
 
   },
   spacing: {

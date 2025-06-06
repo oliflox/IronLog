@@ -1,30 +1,29 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { FlatList, Text, View } from "react-native";
-
-import { WorkoutList } from "../components/WorkoutList";
+import GenericList from "../components/GenericList";
 import { mockWorkouts } from "../mock/workouts";
-import { workoutStyles } from "../styles/workout";
 
 type RootStackParamList = {
   Workout: undefined;
   Profil: undefined;
   Timer: undefined;
   Calendar: undefined;
+  WorkoutSessions: { programId: string };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
 const WorkoutScreen = ({ navigation }: Props) => {
+  const handleItemPress = (item: any) => {
+    navigation.navigate("WorkoutSessions", { programId: item.id });
+  };
+
   return (
-    <View style={workoutStyles.workoutContainer}>
-      <Text style={workoutStyles.workoutTitle}>Workouts</Text>
-      <FlatList
-        data={mockWorkouts}
-        renderItem={({ item }) => <WorkoutList item={item} />}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+    <GenericList
+      data={mockWorkouts}
+      onItemPress={handleItemPress}
+      title="Workouts"
+    />
   );
 };
 

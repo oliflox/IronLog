@@ -3,19 +3,21 @@ export interface Exercise {
   imageUrl: string;
 }
 
-export interface WorkoutDay {
+export interface WorkoutSession {
   id: string;
   day: string;
   muscleGroup: string;
+  imageUrl?: string;
   exercises: Exercise[];
 }
 
-export const Sessions: Record<string, WorkoutDay[]> = {
+export const Sessions: Record<string, WorkoutSession[]> = {
   '1': [ // Full Body Workout
     {
       id: '1-1',
       day: 'Lundi',
       muscleGroup: 'Full Body',
+      imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop',
       exercises: [
         {
           name: 'Squats',
@@ -43,6 +45,7 @@ export const Sessions: Record<string, WorkoutDay[]> = {
       id: '1-2',
       day: 'Mercredi',
       muscleGroup: 'Full Body',
+      imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop',
       exercises: [
         {
           name: 'Lunges',
@@ -72,6 +75,7 @@ export const Sessions: Record<string, WorkoutDay[]> = {
       id: '2-1',
       day: 'Lundi',
       muscleGroup: 'Chest & Triceps',
+      imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop',
       exercises: [
         {
           name: 'Bench Press',

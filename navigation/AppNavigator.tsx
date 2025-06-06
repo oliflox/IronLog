@@ -9,12 +9,12 @@ import ProfileScreen from '../screens/ProfileScreen';
 import TimerScreen from '../screens/TimerScreen';
 import WorkoutExercises from '../screens/WorkoutExercises';
 import WorkoutScreen from '../screens/WorkoutScreen';
-import WorkoutDaysScreen from '../screens/WorkoutSessionsScreen';
+import WorkoutSessionsScreen from '../screens/WorkoutSessionsScreen';
 import { navigationOptions, navigationStyles } from '../styles/navigation';
 
 type RootStackParamList = {
   Main: undefined;
-  WorkoutDays: { programId: string };
+  WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
 };
 
@@ -91,8 +91,8 @@ const AppNavigator = () => {
     >
       <Stack.Screen name="Main" component={TabNavigator} />
       <Stack.Screen
-        name="WorkoutDays" 
-        component={WorkoutDaysScreen}
+        name="WorkoutSessions" 
+        component={WorkoutSessionsScreen}
         options={{
           headerShown: true,
           title: 'Sessions d\'entraînement',

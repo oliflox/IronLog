@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import GenericList from "../components/GenericList";
+import GenericFlatList from "../components/GenericFlatList";
 import { Sessions } from "../mock/Sessions";
 
 type RootStackParamList = {
@@ -23,7 +23,7 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
   };
 
   return (
-    <GenericList
+    <GenericFlatList
       data={sessions.map(session => ({
         id: session.id,
         name: session.day,

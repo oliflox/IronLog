@@ -32,10 +32,4 @@ export const workoutStyles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.medium,
     color: theme.colors.text,
   },
-  sessionName: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text,
-    padding: theme.spacing.sm,
-  },
-
 }); 

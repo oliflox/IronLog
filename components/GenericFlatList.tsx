@@ -1,0 +1,65 @@
+import React from 'react';
+import { FlatList, Image, Pressable, Text, View } from 'react-native';
+import { workoutStyles } from '../styles/workout';
+
+interface ListItem {
+  id: string;
+  name: string;
+  imageUrl?: string;
+}
+
+interface GenericFlatListProps {
+  data: ListItem[];
+  onItemPress?: (item: ListItem) => void;
+  title?: string;
+}
+
+const getRandomColor = () => {
+  const colors = ['#BA181B', '#E5383B', '#B1A7A6', '#D3D3D3', '#660708'];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
+const GenericFlatList: React.FC<GenericFlatListProps> = ({ data, onItemPress, title }) => {
+  const renderItem = ({ item }: { item: ListItem }) => {
+    const firstLetter = item.name.charAt(0).toUpperCase();
+    const backgroundColor = getRandomColor();
+
+    return (
+      <Pressable
+        style={({ pressed }) => [
+          workoutStyles.workoutItem,
+          pressed && { opacity: 0.7 }
+        ]}
+        onPress={() => onItemPress?.(item)}
+      >
+        {item.imageUrl ? (
+          <Image
+            source={{ uri: item.imageUrl }}
+            style={workoutStyles.workoutImage}
+          />
+        ) : (
+          <View style={[workoutStyles.workoutImage, { backgroundColor, justifyContent: 'center', alignItems: 'center' }]}>
+            <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>
+              {firstLetter}
+            </Text>
+          </View>
+        )}
+        <Text style={workoutStyles.workoutName}>{item.name}</Text>
+      </Pressable>
+    );
+  };
+
+  return (
+    <View style={workoutStyles.workoutContainer}>
+      {title && <Text style={workoutStyles.workoutTitle}>{title}</Text>}
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        numColumns={1}
+      />
+    </View>
+  );
+};
+
+export default GenericFlatList; 

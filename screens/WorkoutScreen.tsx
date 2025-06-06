@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import GenericList from "../components/GenericList";
+import GenericFlatList from "../components/GenericFlatList";
 import { mockWorkouts } from "../mock/workouts";
 
 type RootStackParamList = {
@@ -19,7 +19,7 @@ const WorkoutScreen = ({ navigation }: Props) => {
   };
 
   return (
-    <GenericList
+    <GenericFlatList
       data={mockWorkouts}
       onItemPress={handleItemPress}
       title="Workouts"

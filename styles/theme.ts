@@ -18,8 +18,9 @@ export const theme = {
 
   },
   spacing: {
-    xs: 4,
-    sm: 8,
+    
+    xs: 8,
+    sm: 12,
     md: 16,
     lg: 24,
     xl: 32,
@@ -51,44 +52,7 @@ export const theme = {
   layout: {
     screenWidth: width,
     screenHeight: height,
-  },
-  shadows: {
-    small: {
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 2,
-    },
-    medium: {
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-      shadowOpacity: 0.30,
-      shadowRadius: 4.65,
-      elevation: 4,
-    },
-    large: {
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 6,
-      },
-      shadowOpacity: 0.37,
-      shadowRadius: 7.49,
-      elevation: 6,
-    },
-    opacity: {
-      low: 0.5,
-      medium: 0.7,
-      high: 1,
-    },
-  },
+  }
 } as const;
 
 // Type pour le thème

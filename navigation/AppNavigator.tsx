@@ -5,19 +5,19 @@ import React from 'react';
 import { Pressable } from 'react-native';
 
 import CalendarScreen from '../screens/CalendarScreen';
-import ExerciseHistoryScreen from '../screens/ExerciseHistoryScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TimerScreen from '../screens/TimerScreen';
 import WorkoutExercises from '../screens/WorkoutExercises';
+import WorkoutLogScreen from '../screens/WorkoutLogScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import WorkoutSessionsScreen from '../screens/WorkoutSessionsScreen';
 import { navigationOptions, navigationStyles } from '../styles/navigation';
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Main: undefined;
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
-  ExerciseHistory: {
+  WorkoutLog: {
     exercise: {
       id: string;
       name: string;
@@ -125,8 +125,8 @@ const AppNavigator = () => {
         }}
       />
       <Stack.Screen 
-        name="ExerciseHistory" 
-        component={ExerciseHistoryScreen}
+        name="WorkoutLog" 
+        component={WorkoutLogScreen}
         options={{
           headerShown: true,
           title: 'Historique',

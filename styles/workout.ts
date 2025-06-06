@@ -24,7 +24,7 @@ export const workoutStyles = StyleSheet.create({
   workoutImage: {
     width: 50,
     height: 50,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.round,
     marginRight: theme.spacing.md,
     backgroundColor: '#B1A7A6', 
     justifyContent: 'center', 

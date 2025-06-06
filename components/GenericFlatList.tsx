@@ -45,7 +45,6 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({ data, onItemPress, ti
 
   return (
     <View style={workoutStyles.workoutContainer}>
-      {title && <Text style={workoutStyles.workoutTitle}>{title}</Text>}
       <FlatList
         data={data}
         renderItem={renderItem}

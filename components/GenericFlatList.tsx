@@ -14,15 +14,9 @@ interface GenericFlatListProps {
   title?: string;
 }
 
-const getRandomColor = () => {
-  const colors = ['#BA181B', '#E5383B', '#B1A7A6', '#D3D3D3', '#660708'];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
-
 const GenericFlatList: React.FC<GenericFlatListProps> = ({ data, onItemPress, title }) => {
   const renderItem = ({ item }: { item: ListItem }) => {
     const firstLetter = item.name.charAt(0).toUpperCase();
-    const backgroundColor = getRandomColor();
 
     return (
       <Pressable
@@ -38,7 +32,7 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({ data, onItemPress, ti
             style={workoutStyles.workoutImage}
           />
         ) : (
-          <View style={[workoutStyles.workoutImage, { backgroundColor, justifyContent: 'center', alignItems: 'center' }]}>
+          <View style={[workoutStyles.workoutImage]}>
             <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>
               {firstLetter}
             </Text>

@@ -13,6 +13,6 @@ export const mockWorkouts: Workout[] = [
   {
     id: '2',
     name: 'Upper Body Strength',
-    imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop',
+    imageUrl:''
   }
 ]; 

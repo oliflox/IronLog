@@ -26,6 +26,9 @@ export const workoutStyles = StyleSheet.create({
     height: 50,
     borderRadius: theme.borderRadius.md,
     marginRight: theme.spacing.md,
+    backgroundColor: '#B1A7A6', 
+    justifyContent: 'center', 
+    alignItems: 'center',
   },
   workoutName: {
     fontSize: theme.typography.fontSize.md,

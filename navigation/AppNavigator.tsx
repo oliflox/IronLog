@@ -129,7 +129,7 @@ const AppNavigator = () => {
         component={WorkoutLogScreen}
         options={{
           headerShown: true,
-          title: 'Historique',
+          title: 'Log',
           headerBackTitle: '',
         }}
       />

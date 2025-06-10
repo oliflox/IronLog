@@ -75,7 +75,7 @@ const TimerScreen = ({ navigation }: Props) => {
 
   return (
     <View style={timerStyles.container}>
-      <Text style={timerStyles.title}>Chronomètre</Text>
+
       
       <View style={timerStyles.currentTimerContainer}>
         <Text style={timerStyles.currentTimerText}>

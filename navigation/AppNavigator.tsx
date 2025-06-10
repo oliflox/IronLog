@@ -103,7 +103,14 @@ const EmptyScreen = () => null;
 const AppNavigator = () => {
   return (
     <Stack.Navigator 
-      screenOptions={navigationOptions}
+      screenOptions={({ navigation }) => ({
+        ...navigationOptions,
+        headerLeft: () => (
+          <Pressable onPress={() => navigation.goBack()}>
+            <Ionicons style={navigationStyles.backButton} name="chevron-back"  />
+          </Pressable>
+        ),
+      })}
     >
       <Stack.Screen name="Main" component={TabNavigator} />
       <Stack.Screen
@@ -111,8 +118,7 @@ const AppNavigator = () => {
         component={WorkoutSessionsScreen}
         options={{
           headerShown: true,
-          title: 'Sessions d\'entraînement',
-          headerBackTitle: '',
+          title: '',
         }}
       />
       <Stack.Screen 
@@ -120,8 +126,7 @@ const AppNavigator = () => {
         component={WorkoutExercises}
         options={{
           headerShown: true,
-          title: 'Exercices',
-          headerBackTitle: '',
+          title: '',
         }}
       />
       <Stack.Screen 
@@ -129,8 +134,7 @@ const AppNavigator = () => {
         component={WorkoutLogScreen}
         options={{
           headerShown: true,
-          title: 'Log',
-          headerBackTitle: '',
+          title: '',
         }}
       />
     </Stack.Navigator>

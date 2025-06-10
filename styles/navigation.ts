@@ -17,11 +17,15 @@ export const navigationStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backButton: {
+    marginLeft: 12,
+    color: theme.colors.primary,
+    fontSize: theme.typography.fontSize.xxl,
+  },
 });
 
 export const navigationOptions = {
   headerShown: false,
-  headerBackTitle: '',
   headerTintColor: '#BA181B',
   headerStyle: {
     backgroundColor: '#fff',

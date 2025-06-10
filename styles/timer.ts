@@ -13,54 +13,45 @@ export const timerStyles = StyleSheet.create({
     marginBottom: theme.spacing.md,
     color: theme.colors.text,
   },
-  gridContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-evenly',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-  },
-  timerBubble: {
-    aspectRatio: 1,
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.round,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.lg,
-  },
-  timerText: {
-    fontSize: theme.typography.fontSize.xl,
-    color: theme.colors.text,
-    fontWeight: 'bold',
-  },
-  activeTimerContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  currentTimerContainer: {
     backgroundColor: theme.colors.itemBg,
-    paddingTop: theme.spacing.md,
-    paddingBottom: theme.spacing.xxl,
-    borderTopLeftRadius: theme.borderRadius.xl,
-    borderTopRightRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    borderRadius: theme.borderRadius.lg,
+    marginBottom: theme.spacing.lg,
     alignItems: 'center',
   },
-  activeTimerText: {
+  currentTimerText: {
     fontSize: theme.typography.fontSize.xxxl,
     color: theme.colors.text,
     fontWeight: 'bold',
     marginBottom: theme.spacing.md,
   },
-  stopButton: {
+  timerButton: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: theme.spacing.xl,
     paddingVertical: theme.spacing.md,
     borderRadius: theme.borderRadius.lg,
   },
-  stopButtonText: {
+  timerButtonText: {
     color: theme.colors.text,
     fontSize: theme.typography.fontSize.lg,
     fontWeight: 'bold',
+  },
+  timerList: {
+    flex: 1,
+  },
+  timerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.colors.itemBg,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.sm,
+  },
+  timerItemText: {
+    fontSize: theme.typography.fontSize.lg,
+    color: theme.colors.text,
+    fontWeight: '500',
   },
 }); 

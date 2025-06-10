@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { timerStyles } from '../styles/timer';
 
@@ -20,6 +20,7 @@ const TimerScreen = ({ navigation }: Props) => {
   const [activeTimer, setActiveTimer] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [lastUsedTimer, setLastUsedTimer] = useState<number | null>(null);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -46,6 +47,7 @@ const TimerScreen = ({ navigation }: Props) => {
     setActiveTimer(seconds);
     setTimeLeft(seconds);
     setIsRunning(true);
+    setLastUsedTimer(seconds);
   };
 
   const handleStop = () => {
@@ -54,29 +56,47 @@ const TimerScreen = ({ navigation }: Props) => {
     setTimeLeft(0);
   };
 
+  const handleStart = () => {
+    if (lastUsedTimer) {
+      setActiveTimer(lastUsedTimer);
+      setTimeLeft(lastUsedTimer);
+      setIsRunning(true);
+    }
+  };
+
+  const renderTimerItem = ({ item: seconds }: { item: number }) => (
+    <Pressable
+      style={timerStyles.timerItem}
+      onPress={() => handleTimerPress(seconds)}
+    >
+      <Text style={timerStyles.timerItemText}>{formatTime(seconds)}</Text>
+    </Pressable>
+  );
+
   return (
     <View style={timerStyles.container}>
       <Text style={timerStyles.title}>Chronomètre</Text>
-      <View style={timerStyles.gridContainer}>
-        {PRESET_TIMERS.map((seconds) => (
-          <Pressable
-            key={seconds}
-            style={timerStyles.timerBubble}
-            onPress={() => handleTimerPress(seconds)}
-          >
-            <Text style={timerStyles.timerText}>{formatTime(seconds)}</Text>
-          </Pressable>
-        ))}
+      
+      <View style={timerStyles.currentTimerContainer}>
+        <Text style={timerStyles.currentTimerText}>
+          {formatTime(isRunning ? timeLeft : (lastUsedTimer || 0))}
+        </Text>
+        <Pressable
+          style={timerStyles.timerButton}
+          onPress={isRunning ? handleStop : handleStart}
+        >
+          <Text style={timerStyles.timerButtonText}>
+            {isRunning ? 'Arrêter' : 'Lancer'}
+          </Text>
+        </Pressable>
       </View>
 
-      {activeTimer !== null && (
-        <View style={timerStyles.activeTimerContainer}>
-          <Text style={timerStyles.activeTimerText}>{formatTime(timeLeft)}</Text>
-          <TouchableOpacity style={timerStyles.stopButton} onPress={handleStop}>
-            <Text style={timerStyles.stopButtonText}>Arrêter</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <FlatList
+        style={timerStyles.timerList}
+        data={PRESET_TIMERS}
+        renderItem={renderTimerItem}
+        keyExtractor={(item) => item.toString()}
+      />
     </View>
   );
 };

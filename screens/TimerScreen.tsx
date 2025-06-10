@@ -90,7 +90,7 @@ const TimerScreen = ({ navigation }: Props) => {
           </Text>
         </Pressable>
       </View>
-
+      <Text style={timerStyles.title}>Chronomètres enregistrés</Text>
       <FlatList
         style={timerStyles.timerList}
         data={PRESET_TIMERS}

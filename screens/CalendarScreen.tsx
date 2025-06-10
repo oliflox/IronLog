@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { Exercise, mockWorkouts } from '../mock/workoutData';
 import { calendarStyles, calendarTheme } from '../styles/calendar';
 import { theme } from '../styles/theme';
 
@@ -12,11 +13,11 @@ type RootStackParamList = {
   Calendar: undefined;
 };
 
-type Exercise = {
-  id: string;
-  name: string;
-  sets: number;
-  reps: number;
+type MarkedDate = {
+  marked?: boolean;
+  dotColor?: string;
+  selected?: boolean;
+  selectedColor?: string;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Calendar'>;
@@ -24,12 +25,23 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Calendar'>;
 const CalendarScreen = ({ navigation }: Props) => {
   const [selected, setSelected] = useState('');
 
-  // Données d'exemple - À remplacer par vos vraies données
-  const exercises: Exercise[] = [
-    { id: '1', name: 'Développé Couché', sets: 4, reps: 12 },
-    { id: '2', name: 'Squat', sets: 5, reps: 8 },
-    { id: '3', name: 'Tractions', sets: 3, reps: 10 },
-  ];
+  // Préparation des dates marquées pour le calendrier
+  const markedDates = Object.keys(mockWorkouts).reduce((acc, date) => {
+    acc[date] = {
+      marked: true,
+      dotColor: theme.colors.primary,
+    };
+    return acc;
+  }, {} as Record<string, MarkedDate>);
+
+  // Ajout de la date sélectionnée
+  if (selected) {
+    markedDates[selected] = {
+      ...markedDates[selected],
+      selected: true,
+      selectedColor: theme.colors.primary,
+    };
+  }
 
   const renderExerciseItem = ({ item }: { item: Exercise }) => (
     <View style={calendarStyles.exerciseItem}>
@@ -48,17 +60,12 @@ const CalendarScreen = ({ navigation }: Props) => {
           onDayPress={day => {
             setSelected(day.dateString);
           }}
-          markedDates={{
-            [selected]: {
-              selected: true,
-              selectedColor: theme.colors.primary,
-            },
-          }}
+          markedDates={markedDates}
           theme={calendarTheme}
         />
       </View>
       <FlatList
-        data={exercises}
+        data={selected ? mockWorkouts[selected]?.exercises || [] : []}
         renderItem={renderExerciseItem}
         keyExtractor={item => item.id}
         style={calendarStyles.exerciseList}

@@ -1,14 +1,16 @@
 import { StyleSheet } from 'react-native';
+import { theme } from './theme';
 
 export const calendarStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 16,
+    backgroundColor: theme.colors.mainBg,
+    padding: theme.spacing.md,
   },
   title: {
-    fontSize: 24,
+    fontSize: theme.typography.fontSize.xxl,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.text,
   },
-}); 
+});

@@ -14,7 +14,7 @@ type RootStackParamList = {
 type Props = NativeStackScreenProps<RootStackParamList, 'Timer'>;
 
 // Timers prédéfinis (en secondes)
-const PRESET_TIMERS = [30, 45, 60, 90, 120, 180];
+const PRESET_TIMERS = [30, 45, 60, 90, 120, 180, 240, 300, 360, 420];
 
 const TimerScreen = ({ navigation }: Props) => {
   const [activeTimer, setActiveTimer] = useState<number | null>(null);

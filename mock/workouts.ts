@@ -14,5 +14,35 @@ export const mockWorkouts: Workout[] = [
     id: '2',
     name: 'Upper Body Strength',
     imageUrl:''
-  }
+  },
+  {
+    id: '3',
+    name: 'Lower Body Strength',
+    imageUrl:''
+  },
+  {
+    id: '4',
+    name: 'Full Body Strength',
+    imageUrl:''
+  },
+  {
+    id: '5',
+    name: 'Full Body Strength',
+    imageUrl:''
+  },
+  {
+    id: '6',
+    name: 'Full Body Strength',
+    imageUrl:''
+  },
+  {
+    id: '7',
+    name: 'Full Body Strength',
+    imageUrl:''
+  },
+  {
+    id: '8',
+    name: 'Full Body Strength',
+    imageUrl:''
+  },
 ]; 

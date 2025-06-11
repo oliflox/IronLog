@@ -10,7 +10,6 @@ export const sectionListStyles = StyleSheet.create({
 
     //Header
     headerContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
         gap: theme.spacing.md,
         marginBottom: theme.spacing.md,
@@ -26,10 +25,29 @@ export const sectionListStyles = StyleSheet.create({
         backgroundColor: theme.colors.itemBg,
         padding: theme.spacing.md,
         borderRadius: theme.borderRadius.md,
+        marginBottom: theme.spacing.md,
+    },
+    sectionHeaderContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     sectionHeaderText: {
         fontSize: theme.typography.fontSize.lg,
         fontWeight: '600',
+        color: theme.colors.text,
+    },
+    sectionTotals: {
+        alignItems: 'flex-end',
+    },
+    sectionTotalText: {
+        fontSize: theme.typography.fontSize.sm,
+        fontWeight: '700',
+        color: theme.colors.primary,
+    },
+    sectionTotalSubText: {
+        fontSize: theme.typography.fontSize.sm,
+        fontWeight: '400',
         color: theme.colors.text,
     },
 
@@ -55,12 +73,8 @@ export const sectionListStyles = StyleSheet.create({
     },
 
     workoutImage: {
-        width: 50,
-        height: 50,
-        borderRadius: theme.borderRadius.round,
-
-    },
-    workoutName: {
-
+        width: '100%',
+        height: 100,
+        borderRadius: theme.borderRadius.md,
     }
 }); 

@@ -11,6 +11,8 @@ interface SectionItem {
 
 interface Section {
   title: string;
+  totalReps: number;
+  totalWeight: number;
   data: SectionItem[];
 }
 
@@ -41,7 +43,17 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
     section: SectionListData<SectionItem, Section>;
   }) => (
     <View style={sectionListStyles.sectionHeader}>
-      <Text style={sectionListStyles.sectionHeaderText}>{section.title}</Text>
+      <View style={sectionListStyles.sectionHeaderContent}>
+        <Text style={sectionListStyles.sectionHeaderText}>{section.title}</Text>
+        <View style={sectionListStyles.sectionTotals}>
+          <Text style={sectionListStyles.sectionTotalText}>
+            {section.totalReps} <Text style={sectionListStyles.sectionTotalSubText}>reps</Text>
+          </Text>
+          <Text style={sectionListStyles.sectionTotalText}>
+            {section.totalWeight} <Text style={sectionListStyles.sectionTotalSubText}>kg</Text>
+          </Text>
+        </View>
+      </View>
     </View>
   );
 

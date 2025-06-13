@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 
+import GlobalPopup from '../components/GlobalPopup';
 import CalendarScreen from '../screens/CalendarScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TimerScreen from '../screens/TimerScreen';
@@ -12,7 +14,6 @@ import WorkoutLogScreen from '../screens/WorkoutLogScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import WorkoutSessionsScreen from '../screens/WorkoutSessionsScreen';
 import { navigationOptions, navigationStyles } from '../styles/navigation';
-
 import { theme } from '../styles/theme';
 
 export type RootStackParamList = {
@@ -47,16 +48,71 @@ type RootTabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-const AddButton = () => (
-  <Pressable
-    style={navigationStyles.addButton}
-    onPress={() => {
-      // TODO: Implémenter l'action du bouton add
-    }}
-  >
-    <Ionicons name="add" size={30} color="#fff" />
-  </Pressable>
-);
+const AddButton = () => {
+  const navigation = useNavigation();
+  const state = navigation.getState();
+  const currentRoute = state?.routes[state?.index ?? 0];
+  const currentScreen = currentRoute?.name;
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+
+  const getButtonConfig = (screen: string | undefined) => {
+    switch (screen) {
+      case 'Calendar':
+        return {
+          icon: "share-social" as const,
+          message: "Partage du calendrier d'entraînement"
+        };
+      case 'Workout':
+        return {
+          icon: "add" as const,
+          message: "Ajout d'un nouvel exercice"
+        };
+      case 'Timer':
+        return {
+          icon: "add" as const,
+          message: "Création d'un nouveau timer"
+        };
+      case 'Profil':
+        return {
+          icon: "add" as const,
+          message: "Ajout d'une nouvelle statistique"
+        };
+      default:
+        return {
+          icon: "add" as const,
+          message: "Action non définie"
+        };
+    }
+  };
+
+  const { icon, message } = getButtonConfig(currentScreen);
+
+  const handlePress = () => {
+    setPopupMessage(message);
+    setIsPopupVisible(true);
+  };
+
+  return (
+    <>
+      <Pressable
+        style={navigationStyles.addButton}
+        onPress={handlePress}
+      >
+        <Ionicons 
+          name={icon} 
+          size={30} 
+          color="#fff" 
+        />
+      </Pressable>
+      <GlobalPopup
+        visible={isPopupVisible}
+        message={popupMessage}
+        onClose={() => setIsPopupVisible(false)}
+      />
+    </>
+  );
+};
 
 const TabNavigator = () => {
   return (
@@ -91,7 +147,7 @@ const TabNavigator = () => {
         name="Add"
         component={EmptyScreen}
         options={{
-          tabBarButton: () => <AddButton />,
+          tabBarButton: (props) => <AddButton {...props} />,
         }}
       />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
@@ -105,7 +161,6 @@ const EmptyScreen = () => null;
 const AppNavigator = () => {
   return (
     <Stack.Navigator 
-      initialRouteName="Main"
       screenOptions={({ navigation }) => ({
         ...navigationOptions,
         headerLeft: () => (

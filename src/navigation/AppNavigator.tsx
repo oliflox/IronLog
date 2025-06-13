@@ -13,6 +13,8 @@ import WorkoutScreen from '../screens/WorkoutScreen';
 import WorkoutSessionsScreen from '../screens/WorkoutSessionsScreen';
 import { navigationOptions, navigationStyles } from '../styles/navigation';
 
+import { theme } from '../styles/theme';
+
 export type RootStackParamList = {
   Main: undefined;
   WorkoutSessions: { programId: string };
@@ -77,8 +79,8 @@ const TabNavigator = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#BA181B',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.accent,
         tabBarStyle: navigationStyles.tabBar,
         tabBarShowLabel: false,
       })}
@@ -103,6 +105,7 @@ const EmptyScreen = () => null;
 const AppNavigator = () => {
   return (
     <Stack.Navigator 
+      initialRouteName="Main"
       screenOptions={({ navigation }) => ({
         ...navigationOptions,
         headerLeft: () => (

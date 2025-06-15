@@ -2,15 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import GenericFlatList from "../components/GenericFlatList";
 import { Sessions } from "../mock/Sessions";
-
-type RootStackParamList = {
-  Workout: undefined;
-  WorkoutSessions: { programId: string };
-  WorkoutExercises: { sessionId: string };
-  Profil: undefined;
-  Timer: undefined;
-  Calendar: undefined;
-};
+import { RootStackParamList } from "../navigation/AppNavigator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSessions">;
 

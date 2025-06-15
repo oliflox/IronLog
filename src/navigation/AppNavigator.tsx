@@ -17,7 +17,7 @@ import { navigationOptions, navigationStyles } from '../styles/navigation';
 import { theme } from '../styles/theme';
 
 export type RootStackParamList = {
-  Main: undefined;
+  Workout: undefined;
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
   WorkoutLog: {
@@ -47,6 +47,8 @@ type RootTabParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabParamList>();
+
+const EmptyScreen = () => null;
 
 const AddButton = () => {
   const navigation = useNavigation();
@@ -114,7 +116,54 @@ const AddButton = () => {
   );
 };
 
-const TabNavigator = () => {
+const WorkoutStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={({ navigation }) => ({
+        ...navigationOptions,
+        headerLeft: () => (
+          <Pressable onPress={() => navigation.goBack()}>
+            <Ionicons style={navigationStyles.backButton} name="chevron-back" />
+          </Pressable>
+        ),
+      })}
+    >
+      <Stack.Screen 
+        name="Workout" 
+        component={WorkoutScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="WorkoutSessions"
+        component={WorkoutSessionsScreen}
+        options={{
+          headerShown: true,
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="WorkoutExercises"
+        component={WorkoutExercises}
+        options={{
+          headerShown: true,
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="WorkoutLog"
+        component={WorkoutLogScreen}
+        options={{
+          headerShown: true,
+          title: '',
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const AppNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -139,9 +188,10 @@ const TabNavigator = () => {
         tabBarInactiveTintColor: theme.colors.accent,
         tabBarStyle: navigationStyles.tabBar,
         tabBarShowLabel: false,
+        headerShown: false,
       })}
     >
-      <Tab.Screen name="Workout" component={WorkoutScreen} />
+      <Tab.Screen name="Workout" component={WorkoutStack} />
       <Tab.Screen name="Timer" component={TimerScreen} />
       <Tab.Screen
         name="Add"
@@ -153,49 +203,6 @@ const TabNavigator = () => {
       <Tab.Screen name="Calendar" component={CalendarScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
     </Tab.Navigator>
-  );
-};
-
-const EmptyScreen = () => null;
-
-const AppNavigator = () => {
-  return (
-    <Stack.Navigator 
-      screenOptions={({ navigation }) => ({
-        ...navigationOptions,
-        headerLeft: () => (
-          <Pressable onPress={() => navigation.goBack()}>
-            <Ionicons style={navigationStyles.backButton} name="chevron-back"  />
-          </Pressable>
-        ),
-      })}
-    >
-      <Stack.Screen name="Main" component={TabNavigator} />
-      <Stack.Screen
-        name="WorkoutSessions" 
-        component={WorkoutSessionsScreen}
-        options={{
-          headerShown: true,
-          title: '',
-        }}
-      />
-      <Stack.Screen 
-        name="WorkoutExercises" 
-        component={WorkoutExercises}
-        options={{
-          headerShown: true,
-          title: '',
-        }}
-      />
-      <Stack.Screen 
-        name="WorkoutLog" 
-        component={WorkoutLogScreen}
-        options={{
-          headerShown: true,
-          title: '',
-        }}
-      />
-    </Stack.Navigator>
   );
 };
 

@@ -15,6 +15,7 @@ export const theme = {
     textSecondary: '#CCCCCC',
 
     accent: '#3A3A3C',
+    error: '#FF3B30',
 
   },
   spacing: {

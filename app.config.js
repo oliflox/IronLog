@@ -6,10 +6,10 @@ export default {
     slug: 'muscu-appli',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    icon: './assets/images/icon.png',
     userInterfaceStyle: 'light',
     splash: {
-      image: './assets/splash.png',
+      image: './assets/images/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
     },
@@ -26,7 +26,11 @@ export default {
       }
     },
     web: {
-      favicon: './assets/favicon.png'
+      favicon: './assets/favicon.png',
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp'
+      }
     },
     plugins: [
       [

@@ -1,23 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { Pressable } from 'react-native';
-
-import GlobalPopup from '../components/GlobalPopup';
-import CalendarScreen from '../screens/CalendarScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import TimerScreen from '../screens/TimerScreen';
-import WorkoutExercises from '../screens/WorkoutExercises';
-import WorkoutLogScreen from '../screens/WorkoutLogScreen';
-import WorkoutScreen from '../screens/WorkoutScreen';
-import WorkoutSessionsScreen from '../screens/WorkoutSessionsScreen';
-import { navigationOptions, navigationStyles } from '../styles/navigation';
-import { theme } from '../styles/theme';
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useState } from "react";
+import { Pressable } from "react-native";
+import AddWorkoutPopup from "../components/AddWorkoutPopup";
+import GlobalPopup from "../components/GlobalPopup";
+import { useAddWorkout } from "../hooks/useAddWorkout";
+import { useWorkouts } from "../hooks/useWorkouts";
+import CalendarScreen from "../screens/CalendarScreen";
+import ProfileScreen from "../screens/ProfileScreen";
+import TimerScreen from "../screens/TimerScreen";
+import WorkoutExercises from "../screens/WorkoutExercises";
+import WorkoutLogScreen from "../screens/WorkoutLogScreen";
+import WorkoutScreen from "../screens/WorkoutScreen";
+import WorkoutSessionsScreen from "../screens/WorkoutSessionsScreen";
+import { navigationOptions, navigationStyles } from "../styles/navigation";
+import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
-  Workout: undefined;
+  Workout: { refresh?: boolean };
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
   WorkoutLog: {
@@ -51,39 +53,45 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 const EmptyScreen = () => null;
 
 const AddButton = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const state = navigation.getState();
   const currentRoute = state?.routes[state?.index ?? 0];
   const currentScreen = currentRoute?.name;
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [popupMessage, setPopupMessage] = useState('');
+  const [popupMessage, setPopupMessage] = useState("");
+  const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
+
+  const { workouts, refreshWorkouts } = useWorkouts();
+  const { addWorkout } = useAddWorkout(() => {
+    setIsAddWorkoutVisible(false);
+  }, refreshWorkouts);
 
   const getButtonConfig = (screen: string | undefined) => {
     switch (screen) {
-      case 'Calendar':
+      case "Calendar":
         return {
           icon: "share-social" as const,
-          message: "Partage du calendrier d'entraînement"
+          message: "Partage du calendrier d'entraînement",
         };
-      case 'Workout':
+      case "Workout":
         return {
           icon: "add" as const,
-          message: "Ajout d'un nouvel exercice"
+          message: "Ajout d'un nouvel exercice",
         };
-      case 'Timer':
+      case "Timer":
         return {
           icon: "add" as const,
-          message: "Création d'un nouveau timer"
+          message: "Création d'un nouveau timer",
         };
-      case 'Profil':
+      case "Profil":
         return {
           icon: "add" as const,
-          message: "Ajout d'une nouvelle statistique"
+          message: "Ajout d'une nouvelle statistique",
         };
       default:
         return {
           icon: "add" as const,
-          message: "Action non définie"
+          message: "Action non définie",
         };
     }
   };
@@ -91,26 +99,28 @@ const AddButton = () => {
   const { icon, message } = getButtonConfig(currentScreen);
 
   const handlePress = () => {
-    setPopupMessage(message);
-    setIsPopupVisible(true);
+    if (currentScreen === "Workout") {
+      setIsAddWorkoutVisible(true);
+    } else {
+      setPopupMessage(message);
+      setIsPopupVisible(true);
+    }
   };
 
   return (
     <>
-      <Pressable
-        style={navigationStyles.addButton}
-        onPress={handlePress}
-      >
-        <Ionicons 
-          name={icon} 
-          size={30} 
-          color="#fff" 
-        />
+      <Pressable style={navigationStyles.addButton} onPress={handlePress}>
+        <Ionicons name={icon} size={30} color="#fff" />
       </Pressable>
       <GlobalPopup
         visible={isPopupVisible}
         message={popupMessage}
         onClose={() => setIsPopupVisible(false)}
+      />
+      <AddWorkoutPopup
+        visible={isAddWorkoutVisible}
+        onClose={() => setIsAddWorkoutVisible(false)}
+        onAdd={addWorkout}
       />
     </>
   );
@@ -128,8 +138,8 @@ const WorkoutStack = () => {
         ),
       })}
     >
-      <Stack.Screen 
-        name="Workout" 
+      <Stack.Screen
+        name="Workout"
         component={WorkoutScreen}
         options={{
           headerShown: false,
@@ -140,7 +150,7 @@ const WorkoutStack = () => {
         component={WorkoutSessionsScreen}
         options={{
           headerShown: true,
-          title: '',
+          title: "",
         }}
       />
       <Stack.Screen
@@ -148,7 +158,7 @@ const WorkoutStack = () => {
         component={WorkoutExercises}
         options={{
           headerShown: true,
-          title: '',
+          title: "",
         }}
       />
       <Stack.Screen
@@ -156,7 +166,7 @@ const WorkoutStack = () => {
         component={WorkoutLogScreen}
         options={{
           headerShown: true,
-          title: '',
+          title: "",
         }}
       />
     </Stack.Navigator>
@@ -167,41 +177,61 @@ const AppNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        ...navigationOptions,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
+          let iconName;
 
-          if (route.name === 'Workout') {
-            iconName = focused ? 'barbell' : 'barbell-outline';
-          } else if (route.name === 'Profil') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Timer') {
-            iconName = focused ? 'timer' : 'timer-outline';
-          } else if (route.name === 'Calendar') {
-            iconName = focused ? 'calendar' : 'calendar-outline';
-          } else {
-            iconName = 'help-outline';
+          switch (route.name) {
+            case "Workout":
+              iconName = focused ? "barbell" : "barbell-outline";
+              break;
+            case "Timer":
+              iconName = focused ? "timer" : "timer-outline";
+              break;
+            case "Calendar":
+              iconName = focused ? "calendar" : "calendar-outline";
+              break;
+            case "Profil":
+              iconName = focused ? "person" : "person-outline";
+              break;
+            default:
+              iconName = "help-circle";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.accent,
-        tabBarStyle: navigationStyles.tabBar,
-        tabBarShowLabel: false,
-        headerShown: false,
+        tabBarInactiveTintColor: theme.colors.mainBg,
       })}
     >
-      <Tab.Screen name="Workout" component={WorkoutStack} />
-      <Tab.Screen name="Timer" component={TimerScreen} />
       <Tab.Screen
-        name="Add"
-        component={EmptyScreen}
+        name="Workout"
+        component={WorkoutStack}
         options={{
-          tabBarButton: (props) => <AddButton {...props} />,
+          headerShown: false,
         }}
       />
-      <Tab.Screen name="Calendar" component={CalendarScreen} />
-      <Tab.Screen name="Profil" component={ProfileScreen} />
+      <Tab.Screen
+        name="Timer"
+        component={TimerScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Calendar"
+        component={CalendarScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Profil"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Tab.Navigator>
   );
 };

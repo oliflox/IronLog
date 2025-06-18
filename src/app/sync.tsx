@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { syncApi, Workout } from '../api';
+import { syncApi, Workout } from '../../app-example/api';
 
 export default function SyncScreen() {
   const [data, setData] = useState<Workout[]>([]);

@@ -1,50 +1,51 @@
-# Welcome to your Expo app 👋
+# 💪 IronLog - Application de Musculation
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Une application mobile complète pour suivre vos entraînements de musculation, gérer vos programmes d'exercices et suivre vos progrès.
 
-## Get started
+## 🚀 Fonctionnalités
 
-1. Install dependencies
+### 📱 Interface Utilisateur
+- **Design moderne** avec une interface intuitive et responsive
+- **Navigation fluide** entre les différentes sections
+- **Animations** et transitions pour une expérience utilisateur optimale
+- **Support multi-plateforme** (iOS, Android, Web)
 
-   ```bash
-   npm install
-   ```
+### 🏋️ Gestion des Entraînements
+- **Programmes d'entraînement** personnalisables
+- **Séances d'entraînement** avec suivi des exercices
+- **Historique des entraînements** avec statistiques détaillées
+- **Minuteur intégré** pour les temps de repos
 
-2. Start the app
+### 📊 Suivi des Progrès
+- **Profil utilisateur** avec mensurations
+- **Statistiques hebdomadaires** (répétitions, poids, séances)
+- **Records personnels** par exercice
+- **Calendrier** pour visualiser l'activité
 
-   ```bash
-   npx expo start
-   ```
+### 🎯 Fonctionnalités Avancées
+- **Base de données locale** avec SQLite
+- **Stockage sécurisé** des données utilisateur
+- **Synchronisation** avec API externe (configurable)
+- **Gestion des images** et avatars
 
-In the output, you'll find options to open the app in a
+## 🛠️ Technologies Utilisées
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **React Native** avec Expo SDK 53
+- **TypeScript** pour un code robuste et maintenable
+- **Expo Router** pour la navigation
+- **SQLite** pour le stockage local
+- **React Navigation** pour la navigation entre écrans
+- **React Native Calendars** pour l'affichage du calendrier
+- **Expo Secure Store** pour le stockage sécurisé
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🎯 Roadmap
 
-## Get a fresh project
+- [ ] Synchronisation cloud
+- [ ] Partage de programmes
+- [ ] Intégration de capteurs (pulsomètre, etc.)
+- [ ] Mode hors ligne amélioré
+- [ ] Notifications push
+- [ ] Intégration avec des appareils connectés
+---
 
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**Développé avec ❤️ pour les passionnés de musculation**

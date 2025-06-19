@@ -1,29 +1,44 @@
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useAddSession } from '../hooks/useAddSession';
 import { useAddWorkout } from '../hooks/useAddWorkout';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { navigationStyles } from '../styles/navigation';
+import { theme } from '../styles/theme';
+import AddSessionPopup from './AddSessionPopup';
 import AddWorkoutPopup from './AddWorkoutPopup';
 import GlobalPopup from './GlobalPopup';
 
-interface AddButtonProps {
-  onRefresh: () => void;
+interface GlobalAddButtonProps {
+  onRefresh?: () => void;
+  sessionWorkoutId?: string; // Pour les sessions, on a besoin de l'ID du workout parent
+  style?: any;
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ onRefresh }) => {
+const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({ 
+  onRefresh,
+  sessionWorkoutId,
+  style
+}) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const state = navigation.getState();
   const currentRoute = state?.routes[state?.index ?? 0];
   const currentScreen = currentRoute?.name;
+  
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
+  const [isAddSessionVisible, setIsAddSessionVisible] = useState(false);
 
   const { addWorkout } = useAddWorkout(() => {
     setIsAddWorkoutVisible(false);
   }, onRefresh);
+
+  const { addSession } = useAddSession(() => {
+    setIsAddSessionVisible(false);
+    onRefresh?.();
+  });
 
   const getButtonConfig = (screen: string | undefined) => {
     switch (screen) {
@@ -36,6 +51,11 @@ const AddButton: React.FC<AddButtonProps> = ({ onRefresh }) => {
         return {
           icon: "add" as const,
           message: "Ajout d'un nouvel exercice"
+        };
+      case 'WorkoutSessions':
+        return {
+          icon: "add" as const,
+          message: "Ajout d'une nouvelle session"
         };
       case 'Timer':
         return {
@@ -60,36 +80,66 @@ const AddButton: React.FC<AddButtonProps> = ({ onRefresh }) => {
   const handlePress = () => {
     if (currentScreen === 'Workout') {
       setIsAddWorkoutVisible(true);
+    } else if (currentScreen === 'WorkoutSessions') {
+      setIsAddSessionVisible(true);
     } else {
       setPopupMessage(message);
       setIsPopupVisible(true);
     }
   };
 
+  const handleAddSession = (name: string) => {
+    if (sessionWorkoutId) {
+      addSession(name, sessionWorkoutId);
+    }
+  };
+
   return (
     <>
-      <Pressable
-        style={navigationStyles.addButton}
-        onPress={handlePress}
-      >
-        <Ionicons 
-          name={icon} 
-          size={30} 
-          color="#fff" 
-        />
-      </Pressable>
+      <View style={[styles.container, style]}>
+        <Pressable
+          style={styles.button}
+          onPress={handlePress}
+        >
+          <Ionicons name={icon} size={30} color="white" />
+        </Pressable>
+      </View>
+      
       <GlobalPopup
         visible={isPopupVisible}
         message={popupMessage}
         onClose={() => setIsPopupVisible(false)}
       />
+      
       <AddWorkoutPopup
         visible={isAddWorkoutVisible}
         onClose={() => setIsAddWorkoutVisible(false)}
         onAdd={addWorkout}
       />
+      
+      <AddSessionPopup
+        visible={isAddSessionVisible}
+        onClose={() => setIsAddSessionVisible(false)}
+        onAdd={handleAddSession}
+      />
     </>
   );
 };
 
-export default AddButton; 
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  button: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default GlobalAddButton; 

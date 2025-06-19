@@ -28,6 +28,19 @@ export const initDatabase = async () => {
       }
       console.log('Migration terminée avec succès');
     }
+
+    // Créer la table sessions
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        workoutId TEXT NOT NULL,
+        "order" INTEGER DEFAULT 0,
+        FOREIGN KEY (workoutId) REFERENCES workouts (id) ON DELETE CASCADE
+      );
+    `);
+    
+    console.log('Table sessions créée avec succès');
   } catch (error) {
     console.error('Erreur lors de l\'initialisation de la base de données:', error);
     throw error;

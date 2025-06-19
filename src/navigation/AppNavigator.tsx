@@ -20,7 +20,7 @@ import { navigationOptions, navigationStyles } from "../styles/navigation";
 import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
-  Workout: { refresh?: boolean };
+  Workout: { refresh?: boolean};
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
   WorkoutLog: {
@@ -139,9 +139,6 @@ const WorkoutStack = () => {
             <Ionicons style={navigationStyles.backButton} name="chevron-back" />
           </Pressable>
         ),
-        headerRight: () => (
-          <EditButton onPress={() => console.log('Edit pressed')} />
-        ),
       })}
     >
       <Stack.Screen
@@ -209,9 +206,6 @@ const AppNavigator = () => {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.mainBg,
-        headerRight: () => (
-          <EditButton onPress={() => console.log('Edit pressed')} />
-        ),
       })}
     >
       <Tab.Screen

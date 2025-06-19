@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
-import AddButton from "../components/AddButton";
 import GenericFlatList from "../components/GenericFlatList";
+import GlobalAddButton from "../components/GlobalAddButton";
 import { useWorkouts } from "../hooks/useWorkouts";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Workout, workoutRepository } from "../storage/workoutRepository";
@@ -64,7 +64,7 @@ const WorkoutScreen = ({ navigation }: Props) => {
         onDeleteItem={handleDeleteWorkout}
         onReorderItems={handleReorderWorkouts}
       />
-      <AddButton onRefresh={refreshWorkouts} />
+      <GlobalAddButton onRefresh={refreshWorkouts} />
     </>
   );
 };

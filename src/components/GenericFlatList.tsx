@@ -2,8 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator
+    RenderItemParams,
+    ScaleDecorator
 } from "react-native-draggable-flatlist";
 import { theme } from "../styles/theme";
 import { workoutStyles } from "../styles/workout";
@@ -22,6 +22,8 @@ interface GenericFlatListProps {
   title?: string;
   onDeleteItem?: (itemId: string) => void;
   onReorderItems?: (data: ListItem[]) => void;
+  onUpdateItem?: (item: ListItem) => void;
+  editMode?: boolean;
 }
 
 const GenericFlatList: React.FC<GenericFlatListProps> = ({ 
@@ -30,6 +32,8 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
   title, 
   onDeleteItem,
   onReorderItems,
+  onUpdateItem,
+  editMode = false,
 }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<ListItem>) => {
     const firstLetter = item.name.charAt(0).toUpperCase();
@@ -44,9 +48,6 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
             { opacity: isActive ? 0.5 : 1 }
           ]}
         >
-          {onDeleteItem && (
-            <DeleteButton onDelete={() => onDeleteItem(item.id)} />
-          )}
           <Pressable
             style={({ pressed }) => [
               { flex: 1, flexDirection: "row", alignItems: "center" },
@@ -70,7 +71,18 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
             )}
             <Text style={workoutStyles.workoutName}>{item.name}</Text>
           </Pressable>
-          {onReorderItems && (
+          {onDeleteItem && editMode && (
+            <DeleteButton onDelete={() => onDeleteItem(item.id)} />
+          )}
+          {onUpdateItem && editMode && (
+            <Pressable
+              style={{ padding: 8, marginLeft: 4 }}
+              onPress={() => onUpdateItem(item)}
+            >
+              <Ionicons name="pencil" size={20} color={theme.colors.primary} />
+            </Pressable>
+          )}
+          {onReorderItems && editMode && (
             <Pressable
               style={{ padding: 8, marginLeft: 4 }}
               onLongPress={drag}

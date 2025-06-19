@@ -1,42 +1,46 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
+import EditWorkoutPopup from "../components/EditWorkoutPopup";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
-import { useWorkouts } from "../hooks/useWorkouts";
+import { useEditMode } from "../contexts/EditModeContext";
+import { useWorkoutManager } from "../hooks/useWorkoutManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Workout, workoutRepository } from "../storage/workoutRepository";
+import { Workout } from "../storage/workoutRepository";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
 const WorkoutScreen = ({ navigation }: Props) => {
-  const { workouts, isLoading, error, refreshWorkouts } = useWorkouts();
+  const { editMode } = useEditMode();
+  const { workouts, isLoading, error, loadWorkouts, deleteWorkout, reorderWorkouts, updateWorkout } = useWorkoutManager();
+  const [editPopupVisible, setEditPopupVisible] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
 
   const handleItemPress = (item: any) => {
     navigation.navigate("WorkoutSessions", { programId: item.id });
   };
 
   const handleDeleteWorkout = async (workoutId: string) => {
-    try {
-      await workoutRepository.deleteWorkout(workoutId);
-      await refreshWorkouts();
-    } catch (err) {
-      console.error('Erreur lors de la suppression du workout:', err);
-    }
+    await deleteWorkout(workoutId);
   };
 
   const handleReorderWorkouts = async (reorderedItems: any[]) => {
-    try {
-      const reorderedWorkouts = reorderedItems.map((item, index) => ({
-        ...item,
-        order: index
-      })) as Workout[];
-      
-      await workoutRepository.reorderWorkouts(reorderedWorkouts);
-      await refreshWorkouts();
-    } catch (err) {
-      console.error('Erreur lors de la réorganisation des workouts:', err);
-    }
+    await reorderWorkouts(reorderedItems);
+  };
+
+  const handleUpdateWorkout = (workout: any) => {
+    setSelectedWorkout(workout);
+    setEditPopupVisible(true);
+  };
+
+  const handleCloseEditPopup = () => {
+    setEditPopupVisible(false);
+    setSelectedWorkout(null);
+  };
+
+  const handleSaveWorkout = (updatedWorkout: Workout) => {
+    updateWorkout(updatedWorkout);
   };
 
   if (isLoading) {
@@ -63,8 +67,16 @@ const WorkoutScreen = ({ navigation }: Props) => {
         title="Workouts"
         onDeleteItem={handleDeleteWorkout}
         onReorderItems={handleReorderWorkouts}
+        editMode={editMode}
+        onUpdateItem={handleUpdateWorkout}
       />
-      <GlobalAddButton onRefresh={refreshWorkouts} />
+      <GlobalAddButton onRefresh={loadWorkouts} />
+      <EditWorkoutPopup
+        visible={editPopupVisible}
+        workout={selectedWorkout}
+        onClose={handleCloseEditPopup}
+        onSave={handleSaveWorkout}
+      />
     </>
   );
 };

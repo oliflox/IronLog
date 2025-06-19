@@ -2,8 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useAddSession } from '../hooks/useAddSession';
-import { useAddWorkout } from '../hooks/useAddWorkout';
+import { useSessionManager } from '../hooks/useSessionManager';
+import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { theme } from '../styles/theme';
 import AddSessionPopup from './AddSessionPopup';
@@ -31,14 +31,8 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
   const [isAddSessionVisible, setIsAddSessionVisible] = useState(false);
 
-  const { addWorkout } = useAddWorkout(() => {
-    setIsAddWorkoutVisible(false);
-  }, onRefresh);
-
-  const { addSession } = useAddSession(() => {
-    setIsAddSessionVisible(false);
-    onRefresh?.();
-  });
+  const { createWorkout } = useWorkoutManager();
+  const { createSession } = sessionWorkoutId ? useSessionManager(sessionWorkoutId) : { createSession: null };
 
   const getButtonConfig = (screen: string | undefined) => {
     switch (screen) {
@@ -88,9 +82,21 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
     }
   };
 
-  const handleAddSession = (name: string) => {
-    if (sessionWorkoutId) {
-      addSession(name, sessionWorkoutId);
+  const handleAddWorkout = async (name: string) => {
+    const success = await createWorkout(name);
+    if (success) {
+      setIsAddWorkoutVisible(false);
+      onRefresh?.();
+    }
+  };
+
+  const handleAddSession = async (name: string) => {
+    if (sessionWorkoutId && createSession) {
+      const success = await createSession(name);
+      if (success) {
+        setIsAddSessionVisible(false);
+        onRefresh?.();
+      }
     }
   };
 
@@ -114,7 +120,7 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
       <AddWorkoutPopup
         visible={isAddWorkoutVisible}
         onClose={() => setIsAddWorkoutVisible(false)}
-        onAdd={addWorkout}
+        onAdd={handleAddWorkout}
       />
       
       <AddSessionPopup

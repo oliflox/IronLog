@@ -3,42 +3,27 @@ import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
-import { useSessions } from "../hooks/useSessions";
+import { useEditMode } from "../contexts/EditModeContext";
+import { useSessionManager } from "../hooks/useSessionManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Session, sessionRepository } from "../storage/sessionRepository";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSessions">;
 
 const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
   const { programId } = route.params;
-  const { sessions, isLoading, error, refreshSessions } =
-    useSessions(programId);
-
+  const { sessions, isLoading, error, loadSessions, deleteSession, reorderSessions } = useSessionManager(programId);
+  const { editMode } = useEditMode();
+  
   const handleItemPress = (item: any) => {
     navigation.navigate("WorkoutExercises", { sessionId: item.id });
   };
 
   const handleDeleteSession = async (sessionId: string) => {
-    try {
-      await sessionRepository.deleteSession(sessionId);
-      await refreshSessions();
-    } catch (err) {
-      console.error("Erreur lors de la suppression de la session:", err);
-    }
+    await deleteSession(sessionId);
   };
 
   const handleReorderSessions = async (reorderedItems: any[]) => {
-    try {
-      const reorderedSessions = reorderedItems.map((item, index) => ({
-        ...item,
-        order: index,
-      })) as Session[];
-
-      await sessionRepository.reorderSessions(reorderedSessions);
-      await refreshSessions();
-    } catch (err) {
-      console.error("Erreur lors de la réorganisation des sessions:", err);
-    }
+    await reorderSessions(reorderedItems);
   };
 
   if (isLoading) {
@@ -65,9 +50,10 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
         title="Sessions"
         onDeleteItem={handleDeleteSession}
         onReorderItems={handleReorderSessions}
+        editMode={editMode}
       />
       <GlobalAddButton 
-        onRefresh={refreshSessions}
+        onRefresh={loadSessions}
         sessionWorkoutId={programId}
       />
     </>

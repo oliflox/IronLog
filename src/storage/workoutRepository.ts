@@ -68,6 +68,18 @@ export const workoutRepository = {
     }
   },
 
+  async updateWorkout(workout: Workout): Promise<void> {
+    try {
+      await db.runAsync(
+        'UPDATE workouts SET name = ? WHERE id = ?',
+        [workout.name, workout.id]
+      );
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du workout:', error);
+      throw error;
+    }
+  },
+
   async reorderWorkouts(workouts: Workout[]): Promise<void> {
     try {
       for (let i = 0; i < workouts.length; i++) {

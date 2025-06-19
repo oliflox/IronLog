@@ -2,10 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useExerciseManager } from '../hooks/useExerciseManager';
 import { useSessionManager } from '../hooks/useSessionManager';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { theme } from '../styles/theme';
+import AddExercisePopup from './AddExercisePopup';
 import AddSessionPopup from './AddSessionPopup';
 import AddWorkoutPopup from './AddWorkoutPopup';
 import GlobalPopup from './GlobalPopup';
@@ -13,12 +15,14 @@ import GlobalPopup from './GlobalPopup';
 interface GlobalAddButtonProps {
   onRefresh?: () => void;
   sessionWorkoutId?: string; // Pour les sessions, on a besoin de l'ID du workout parent
+  exerciseSessionId?: string; // Pour les exercices, on a besoin de l'ID de la session parent
   style?: any;
 }
 
 const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({ 
   onRefresh,
   sessionWorkoutId,
+  exerciseSessionId,
   style
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -30,9 +34,11 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   const [popupMessage, setPopupMessage] = useState('');
   const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
   const [isAddSessionVisible, setIsAddSessionVisible] = useState(false);
+  const [isAddExerciseVisible, setIsAddExerciseVisible] = useState(false);
 
   const { createWorkout } = useWorkoutManager();
   const { createSession } = sessionWorkoutId ? useSessionManager(sessionWorkoutId) : { createSession: null };
+  const { createExercise } = exerciseSessionId ? useExerciseManager(exerciseSessionId) : { createExercise: null };
 
   const getButtonConfig = (screen: string | undefined) => {
     switch (screen) {
@@ -50,6 +56,11 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
         return {
           icon: "add" as const,
           message: "Ajout d'une nouvelle session"
+        };
+      case 'WorkoutExercises':
+        return {
+          icon: "add" as const,
+          message: "Ajout d'un nouvel exercice"
         };
       case 'Timer':
         return {
@@ -76,6 +87,8 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
       setIsAddWorkoutVisible(true);
     } else if (currentScreen === 'WorkoutSessions') {
       setIsAddSessionVisible(true);
+    } else if (currentScreen === 'WorkoutExercises') {
+      setIsAddExerciseVisible(true);
     } else {
       setPopupMessage(message);
       setIsPopupVisible(true);
@@ -95,6 +108,16 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
       const success = await createSession(name);
       if (success) {
         setIsAddSessionVisible(false);
+        onRefresh?.();
+      }
+    }
+  };
+
+  const handleAddExercise = async (name: string, description?: string) => {
+    if (exerciseSessionId && createExercise) {
+      const success = await createExercise(name, description);
+      if (success) {
+        setIsAddExerciseVisible(false);
         onRefresh?.();
       }
     }
@@ -127,6 +150,12 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
         visible={isAddSessionVisible}
         onClose={() => setIsAddSessionVisible(false)}
         onAdd={handleAddSession}
+      />
+      
+      <AddExercisePopup
+        visible={isAddExerciseVisible}
+        onClose={() => setIsAddExerciseVisible(false)}
+        onAdd={handleAddExercise}
       />
     </>
   );

@@ -8,7 +8,7 @@ import { useEditMode } from "../contexts/EditModeContext";
 import CalendarScreen from "../screens/CalendarScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TimerScreen from "../screens/TimerScreen";
-import WorkoutExercises from "../screens/WorkoutExercises";
+import WorkoutExercisesScreen from "../screens/WorkoutExercisesScreen";
 import WorkoutLogScreen from "../screens/WorkoutLogScreen";
 import WorkoutScreen from "../screens/WorkoutScreen";
 import WorkoutSessionsScreen from "../screens/WorkoutSessionsScreen";
@@ -91,7 +91,7 @@ const WorkoutStack = () => {
       />
       <Stack.Screen
         name="WorkoutExercises"
-        component={WorkoutExercises}
+        component={WorkoutExercisesScreen}
         options={{
           headerShown: true,
           headerTitle: "Exercices",

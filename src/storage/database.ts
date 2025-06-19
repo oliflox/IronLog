@@ -41,6 +41,21 @@ export const initDatabase = async () => {
     `);
     
     console.log('Table sessions créée avec succès');
+
+    // Créer la table exercises
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS exercises (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        sessionId TEXT NOT NULL,
+        "order" INTEGER DEFAULT 0,
+        imageUrl TEXT,
+        description TEXT,
+        FOREIGN KEY (sessionId) REFERENCES sessions (id) ON DELETE CASCADE
+      );
+    `);
+    
+    console.log('Table exercises créée avec succès');
   } catch (error) {
     console.error('Erreur lors de l\'initialisation de la base de données:', error);
     throw error;

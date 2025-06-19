@@ -96,29 +96,35 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   };
 
   const handleAddWorkout = async (name: string) => {
-    const success = await createWorkout(name);
-    if (success) {
+    try {
+      await createWorkout(name);
       setIsAddWorkoutVisible(false);
       onRefresh?.();
+    } catch (error) {
+      console.error('Erreur lors de la création du workout:', error);
     }
   };
 
   const handleAddSession = async (name: string) => {
     if (sessionWorkoutId && createSession) {
-      const success = await createSession(name);
-      if (success) {
+      try {
+        await createSession(name);
         setIsAddSessionVisible(false);
         onRefresh?.();
+      } catch (error) {
+        console.error('Erreur lors de la création de la session:', error);
       }
     }
   };
 
-  const handleAddExercise = async (name: string, description?: string) => {
+  const handleAddExercise = async (name: string, description?: string, imageUrl?: string) => {
     if (exerciseSessionId && createExercise) {
-      const success = await createExercise(name, description);
-      if (success) {
+      try {
+        await createExercise(name, description, imageUrl);
         setIsAddExerciseVisible(false);
         onRefresh?.();
+      } catch (error) {
+        console.error('Erreur lors de la création de l\'exercice:', error);
       }
     }
   };

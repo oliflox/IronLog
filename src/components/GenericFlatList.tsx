@@ -52,8 +52,14 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
             style={({ pressed }) => [
               { flex: 1, flexDirection: "row", alignItems: "center" },
               pressed && { opacity: 0.7 },
+              editMode && { opacity: 0.6 },
             ]}
-            onPress={() => onItemPress?.(item)}
+            onPress={() => {
+              if (!editMode) {
+                onItemPress?.(item);
+              }
+            }}
+            disabled={editMode}
           >
             {item.imageUrl ? (
               <Image
@@ -69,7 +75,15 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
                 </Text>
               </View>
             )}
-            <Text style={workoutStyles.workoutName}>{item.name}</Text>
+            <Text style={[
+              workoutStyles.workoutName,
+              editMode && { color: theme.colors.textSecondary }
+            ]}>{item.name}</Text>
+            {editMode && (
+              <View style={{ marginLeft: 8, opacity: 0.6 }}>
+                <Ionicons name="lock-closed" size={16} color={theme.colors.textSecondary} />
+              </View>
+            )}
           </Pressable>
           {onDeleteItem && editMode && (
             <DeleteButton onDelete={() => onDeleteItem(item.id)} />

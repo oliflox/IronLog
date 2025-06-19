@@ -44,7 +44,7 @@ export const exerciseRepository = {
     }
   },
 
-  async createExercise(name: string, sessionId: string, description?: string): Promise<Exercise> {
+  async createExercise(name: string, sessionId: string, description?: string, imageUrl?: string): Promise<Exercise> {
     try {
       const id = randomUUID();
       const result = await db.getAllAsync<{maxOrder: number}>('SELECT COALESCE(MAX("order"), -1) as maxOrder FROM exercises WHERE sessionId = ?', [sessionId]);
@@ -52,19 +52,19 @@ export const exerciseRepository = {
       const newOrder = maxOrder + 1;
       
       await db.runAsync(
-        'INSERT INTO exercises (id, name, sessionId, "order", description) VALUES (?, ?, ?, ?, ?)',
-        [id, name, sessionId, newOrder, description || null]
+        'INSERT INTO exercises (id, name, sessionId, "order", description, imageUrl) VALUES (?, ?, ?, ?, ?, ?)',
+        [id, name, sessionId, newOrder, description || null, imageUrl || null]
       );
-      return { id, name, sessionId, order: newOrder, description };
+      return { id, name, sessionId, order: newOrder, description, imageUrl };
     } catch (error) {
       console.error('Erreur lors de la création de l\'exercice:', error);
       throw error;
     }
   },
 
-  async updateExercise(id: string, name: string, description?: string): Promise<void> {
+  async updateExercise(id: string, name: string, description?: string, imageUrl?: string): Promise<void> {
     try {
-      await db.runAsync('UPDATE exercises SET name = ?, description = ? WHERE id = ?', [name, description || null, id]);
+      await db.runAsync('UPDATE exercises SET name = ?, description = ?, imageUrl = ? WHERE id = ?', [name, description || null, imageUrl || null, id]);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'exercice:', error);
       throw error;

@@ -100,4 +100,42 @@ export const editExercisePopupStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600" as const,
   },
+  imageContainer: {
+    marginTop: 8,
+  },
+  imagePickerButton: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    borderStyle: "dashed" as const,
+    borderRadius: 8,
+    padding: 20,
+    backgroundColor: theme.colors.mainBg,
+  },
+  imagePickerText: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontWeight: "600" as const,
+    marginLeft: 8,
+  },
+  imagePreview: {
+    position: "relative" as const,
+    alignItems: "center" as const,
+  },
+  previewImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: theme.colors.accent,
+  },
+  removeImageButton: {
+    position: "absolute" as const,
+    top: -8,
+    right: -8,
+    backgroundColor: theme.colors.itemBg,
+    borderRadius: 12,
+  },
 }); 

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import { Image, Modal, Pressable, Text, TextInput, View } from "react-native";
 import { editExercisePopupStyles } from "../styles/editExercisePopup";
 import { theme } from "../styles/theme";
 
@@ -28,13 +29,32 @@ const EditExercisePopup: React.FC<EditExercisePopupProps> = ({
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | undefined>("");
 
   React.useEffect(() => {
     if (exercise) {
       setName(exercise.name);
       setDescription(exercise.description || "");
+      setImageUrl(exercise.imageUrl);
     }
   }, [exercise]);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setImageUrl(result.assets[0].uri);
+    }
+  };
+
+  const removeImage = () => {
+    setImageUrl(undefined);
+  };
 
   const handleSave = () => {
     if (exercise && name.trim()) {
@@ -42,6 +62,7 @@ const EditExercisePopup: React.FC<EditExercisePopupProps> = ({
         ...exercise,
         name: name.trim(),
         description: description.trim() || undefined,
+        imageUrl: imageUrl,
       });
       onClose();
     }
@@ -51,6 +72,7 @@ const EditExercisePopup: React.FC<EditExercisePopupProps> = ({
     if (exercise) {
       setName(exercise.name);
       setDescription(exercise.description || "");
+      setImageUrl(exercise.imageUrl);
     }
     onClose();
   };
@@ -83,6 +105,25 @@ const EditExercisePopup: React.FC<EditExercisePopupProps> = ({
                 placeholder="Entrez le nom de l'exercice"
                 placeholderTextColor={theme.colors.textSecondary}
               />
+            </View>
+
+            <View style={editExercisePopupStyles.inputGroup}>
+              <Text style={editExercisePopupStyles.label}>Image (optionnel)</Text>
+              <View style={editExercisePopupStyles.imageContainer}>
+                {imageUrl ? (
+                  <View style={editExercisePopupStyles.imagePreview}>
+                    <Image source={{ uri: imageUrl }} style={editExercisePopupStyles.previewImage} />
+                    <Pressable onPress={removeImage} style={editExercisePopupStyles.removeImageButton}>
+                      <Ionicons name="close-circle" size={24} color={theme.colors.error} />
+                    </Pressable>
+                  </View>
+                ) : (
+                  <Pressable onPress={pickImage} style={editExercisePopupStyles.imagePickerButton}>
+                    <Ionicons name="camera" size={24} color={theme.colors.primary} />
+                    <Text style={editExercisePopupStyles.imagePickerText}>Sélectionner une image</Text>
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View style={editExercisePopupStyles.inputGroup}>

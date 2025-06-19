@@ -30,30 +30,30 @@ export const useExerciseManager = (sessionId: string) => {
   };
 
   // Créer un exercice
-  const createExercise = async (name: string, description?: string) => {
+  const createExercise = async (name: string, description?: string, imageUrl?: string) => {
+    if (!sessionId) return;
+    
+    setIsLoading(true);
     try {
-      setError(null);
-      await exerciseRepository.createExercise(name, sessionId, description);
+      await exerciseRepository.createExercise(name, sessionId, description, imageUrl);
       await loadExercises();
-      return true;
-    } catch (err) {
-      setError('Erreur lors de la création de l\'exercice');
-      console.error('Erreur lors de la création de l\'exercice:', err);
-      return false;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erreur lors de la création de l\'exercice');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Mettre à jour un exercice
   const updateExercise = async (exercise: Exercise) => {
+    setIsLoading(true);
     try {
-      setError(null);
-      await exerciseRepository.updateExercise(exercise.id, exercise.name, exercise.description);
+      await exerciseRepository.updateExercise(exercise.id, exercise.name, exercise.description, exercise.imageUrl);
       await loadExercises();
-      return true;
-    } catch (err) {
-      setError('Erreur lors de la mise à jour de l\'exercice');
-      console.error('Erreur lors de la mise à jour de l\'exercice:', err);
-      return false;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erreur lors de la mise à jour de l\'exercice');
+    } finally {
+      setIsLoading(false);
     }
   };
 

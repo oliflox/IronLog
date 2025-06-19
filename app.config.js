@@ -17,13 +17,20 @@ export default {
       '**/*'
     ],
     ios: {
-      supportsTablet: true
+      supportsTablet: true,
+      infoPlist: {
+        NSPhotoLibraryUsageDescription: "Cette application nécessite l'accès à votre galerie photos pour sélectionner des images d'exercices."
+      }
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#ffffff'
-      }
+      },
+      permissions: [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     },
     web: {
       favicon: './assets/favicon.png',
@@ -39,6 +46,12 @@ export default {
           "android": {
             "usesCleartextTraffic": true
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Cette application nécessite l'accès à votre galerie photos pour sélectionner des images d'exercices."
         }
       ]
     ],

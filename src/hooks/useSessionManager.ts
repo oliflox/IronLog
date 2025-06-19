@@ -36,7 +36,7 @@ export const useSessionManager = (workoutId: string) => {
   const updateSession = async (session: Session) => {
     try {
       setError(null);
-      await sessionRepository.updateSession(session);
+      await sessionRepository.updateSession(session.id, session.name);
       await loadSessions();
       return true;
     } catch (err) {

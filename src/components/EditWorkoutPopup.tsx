@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { Modal, Pressable, Text, TextInput, View } from "react-native";
+import { editWorkoutPopupStyles } from "../styles/editWorkoutPopup";
 import { theme } from "../styles/theme";
 
 interface Workout {
@@ -56,20 +57,20 @@ const EditWorkoutPopup: React.FC<EditWorkoutPopupProps> = ({
       animationType="fade"
       onRequestClose={handleCancel}
     >
-      <View style={styles.overlay}>
-        <View style={styles.popup}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Modifier le workout</Text>
-            <Pressable onPress={handleCancel} style={styles.closeButton}>
+      <View style={editWorkoutPopupStyles.overlay}>
+        <View style={editWorkoutPopupStyles.popup}>
+          <View style={editWorkoutPopupStyles.header}>
+            <Text style={editWorkoutPopupStyles.title}>Modifier le workout</Text>
+            <Pressable onPress={handleCancel} style={editWorkoutPopupStyles.closeButton}>
               <Ionicons name="close" size={24} color={theme.colors.text} />
             </Pressable>
           </View>
 
-          <View style={styles.content}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Nom du workout</Text>
+          <View style={editWorkoutPopupStyles.content}>
+            <View style={editWorkoutPopupStyles.inputGroup}>
+              <Text style={editWorkoutPopupStyles.label}>Nom du workout</Text>
               <TextInput
-                style={styles.input}
+                style={editWorkoutPopupStyles.input}
                 value={name}
                 onChangeText={setName}
                 placeholder="Entrez le nom du workout"
@@ -78,112 +79,22 @@ const EditWorkoutPopup: React.FC<EditWorkoutPopupProps> = ({
             </View>
           </View>
 
-          <View style={styles.footer}>
-            <Pressable onPress={handleCancel} style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>Annuler</Text>
+          <View style={editWorkoutPopupStyles.footer}>
+            <Pressable onPress={handleCancel} style={editWorkoutPopupStyles.cancelButton}>
+              <Text style={editWorkoutPopupStyles.cancelButtonText}>Annuler</Text>
             </Pressable>
             <Pressable
               onPress={handleSave}
-              style={[styles.saveButton, !name.trim() && styles.saveButtonDisabled]}
+              style={[editWorkoutPopupStyles.saveButton, !name.trim() && editWorkoutPopupStyles.saveButtonDisabled]}
               disabled={!name.trim()}
             >
-              <Text style={styles.saveButtonText}>Enregistrer</Text>
+              <Text style={editWorkoutPopupStyles.saveButtonText}>Enregistrer</Text>
             </Pressable>
           </View>
         </View>
       </View>
     </Modal>
   );
-};
-
-const styles = {
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  popup: {
-    backgroundColor: theme.colors.itemBg,
-    borderRadius: 12,
-    width: "100%",
-    maxWidth: 400,
-    maxHeight: "80%",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: theme.colors.text,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  content: {
-    padding: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: theme.colors.text,
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: theme.colors.text,
-    backgroundColor: theme.colors.mainBg,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    marginRight: 10,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: theme.colors.text,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  saveButton: {
-    flex: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: theme.colors.primary,
-    alignItems: "center",
-  },
-  saveButtonDisabled: {
-    backgroundColor: theme.colors.textSecondary,
-  },
-  saveButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
 };
 
 export default EditWorkoutPopup; 

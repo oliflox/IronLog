@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Pressable } from "react-native";
 import AddWorkoutPopup from "../components/AddWorkoutPopup";
+import EditButton from "../components/EditButton";
 import GlobalPopup from "../components/GlobalPopup";
 import { useAddWorkout } from "../hooks/useAddWorkout";
 import { useWorkouts } from "../hooks/useWorkouts";
@@ -127,6 +128,8 @@ const AddButton = () => {
 };
 
 const WorkoutStack = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   return (
     <Stack.Navigator
       screenOptions={({ navigation }) => ({
@@ -136,13 +139,17 @@ const WorkoutStack = () => {
             <Ionicons style={navigationStyles.backButton} name="chevron-back" />
           </Pressable>
         ),
+        headerRight: () => (
+          <EditButton onPress={() => console.log('Edit pressed')} />
+        ),
       })}
     >
       <Stack.Screen
         name="Workout"
         component={WorkoutScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Workout",
         }}
       />
       <Stack.Screen
@@ -150,7 +157,7 @@ const WorkoutStack = () => {
         component={WorkoutSessionsScreen}
         options={{
           headerShown: true,
-          title: "",
+          headerTitle: "Sessions",
         }}
       />
       <Stack.Screen
@@ -158,7 +165,7 @@ const WorkoutStack = () => {
         component={WorkoutExercises}
         options={{
           headerShown: true,
-          title: "",
+          headerTitle: "Exercices",
         }}
       />
       <Stack.Screen
@@ -166,7 +173,7 @@ const WorkoutStack = () => {
         component={WorkoutLogScreen}
         options={{
           headerShown: true,
-          title: "",
+          headerTitle: "Historique",
         }}
       />
     </Stack.Navigator>
@@ -179,7 +186,7 @@ const AppNavigator = () => {
       screenOptions={({ route }) => ({
         ...navigationOptions,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName: keyof typeof Ionicons.glyphMap;
 
           switch (route.name) {
             case "Workout":
@@ -202,6 +209,9 @@ const AppNavigator = () => {
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.mainBg,
+        headerRight: () => (
+          <EditButton onPress={() => console.log('Edit pressed')} />
+        ),
       })}
     >
       <Tab.Screen
@@ -209,27 +219,31 @@ const AppNavigator = () => {
         component={WorkoutStack}
         options={{
           headerShown: false,
+          headerTitle: "Workout",
         }}
       />
       <Tab.Screen
         name="Timer"
         component={TimerScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Timer",
         }}
       />
       <Tab.Screen
         name="Calendar"
         component={CalendarScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Calendar",
         }}
       />
       <Tab.Screen
         name="Profil"
         component={ProfileScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Profil",
         }}
       />
     </Tab.Navigator>

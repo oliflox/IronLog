@@ -5,6 +5,7 @@ import AddButton from "../components/AddButton";
 import GenericFlatList from "../components/GenericFlatList";
 import { useWorkouts } from "../hooks/useWorkouts";
 import { RootStackParamList } from "../navigation/AppNavigator";
+import { Workout, workoutRepository } from "../storage/workoutRepository";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
@@ -13,6 +14,29 @@ const WorkoutScreen = ({ navigation }: Props) => {
 
   const handleItemPress = (item: any) => {
     navigation.navigate("WorkoutSessions", { programId: item.id });
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    try {
+      await workoutRepository.deleteWorkout(workoutId);
+      await refreshWorkouts();
+    } catch (err) {
+      console.error('Erreur lors de la suppression du workout:', err);
+    }
+  };
+
+  const handleReorderWorkouts = async (reorderedItems: any[]) => {
+    try {
+      const reorderedWorkouts = reorderedItems.map((item, index) => ({
+        ...item,
+        order: index
+      })) as Workout[];
+      
+      await workoutRepository.reorderWorkouts(reorderedWorkouts);
+      await refreshWorkouts();
+    } catch (err) {
+      console.error('Erreur lors de la réorganisation des workouts:', err);
+    }
   };
 
   if (isLoading) {
@@ -37,6 +61,8 @@ const WorkoutScreen = ({ navigation }: Props) => {
         data={workouts}
         onItemPress={handleItemPress}
         title="Workouts"
+        onDeleteItem={handleDeleteWorkout}
+        onReorderItems={handleReorderWorkouts}
       />
       <AddButton onRefresh={refreshWorkouts} />
     </>

@@ -3,7 +3,6 @@ import { Exercise, exerciseRepository } from '../storage/exerciseRepository';
 
 export const useExerciseManager = (sessionId: string) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Charger les exercices
@@ -32,28 +31,21 @@ export const useExerciseManager = (sessionId: string) => {
   // Créer un exercice
   const createExercise = async (name: string, description?: string, imageUrl?: string) => {
     if (!sessionId) return;
-    
-    setIsLoading(true);
     try {
       await exerciseRepository.createExercise(name, sessionId, description, imageUrl);
       await loadExercises();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erreur lors de la création de l\'exercice');
-    } finally {
-      setIsLoading(false);
     }
   };
 
   // Mettre à jour un exercice
   const updateExercise = async (exercise: Exercise) => {
-    setIsLoading(true);
     try {
       await exerciseRepository.updateExercise(exercise.id, exercise.name, exercise.description, exercise.imageUrl);
       await loadExercises();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erreur lors de la mise à jour de l\'exercice');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -93,15 +85,12 @@ export const useExerciseManager = (sessionId: string) => {
   useEffect(() => {
     const initialLoad = async () => {
       try {
-        setIsLoading(true);
         setError(null);
         const data = await exerciseRepository.getExercisesBySessionId(sessionId);
         setExercises(data);
       } catch (err) {
         setError('Erreur lors du chargement des exercices');
         console.error('Erreur lors du chargement des exercices:', err);
-      } finally {
-        setIsLoading(false);
       }
     };
     
@@ -111,7 +100,6 @@ export const useExerciseManager = (sessionId: string) => {
   return {
     // État
     exercises,
-    isLoading,
     error,
     
     // Actions

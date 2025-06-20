@@ -23,15 +23,7 @@ export type RootStackParamList = {
     exercise: {
       id: string;
       name: string;
-      imageUrl: string;
-      history: {
-        date: string;
-        sets: {
-          id: string;
-          repetitions: number;
-          weight: number;
-        }[];
-      }[];
+      imageUrl?: string;
     };
   };
 };

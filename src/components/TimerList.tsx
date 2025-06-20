@@ -65,12 +65,6 @@ const TimerList: React.FC<TimerListProps> = ({
                 timerStyles.timerItemText,
                 editMode && { color: theme.colors.textSecondary }
               ]}>
-                {item.name}
-              </Text>
-              <Text style={[
-                timerStyles.timerItemDuration,
-                editMode && { color: theme.colors.textSecondary }
-              ]}>
                 {formatTime(item.duration)}
               </Text>
             </View>

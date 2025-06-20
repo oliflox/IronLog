@@ -3,10 +3,8 @@ import { db } from "./database";
 
 export interface Timer {
   id: string;
-  name: string;
   duration: number; // en secondes
   order: number;
-  description?: string;
 }
 
 export const timerRepository = {
@@ -16,15 +14,15 @@ export const timerRepository = {
 
       if (result.length === 0) {
         const timers = [
-          { id: randomUUID(), name: 'Timer 30s', duration: 30, order: 0 },
-          { id: randomUUID(), name: 'Timer 1min', duration: 60, order: 1 },
-          { id: randomUUID(), name: 'Timer 2min', duration: 120, order: 2 }
+          { id: randomUUID(), duration: 30, order: 0 },
+          { id: randomUUID(), duration: 60, order: 1 },
+          { id: randomUUID(), duration: 120, order: 2 }
         ];
 
         for (const timer of timers) {
           await db.runAsync(
-            'INSERT INTO timers (id, name, duration, "order") VALUES (?, ?, ?, ?)',
-            [timer.id, timer.name, timer.duration, timer.order]
+            'INSERT INTO timers (id, duration, "order") VALUES (?, ?, ?)',
+            [timer.id, timer.duration, timer.order]
           );
         }
       }
@@ -43,7 +41,7 @@ export const timerRepository = {
     }
   },
 
-  async createTimer(name: string, duration: number): Promise<Timer> {
+  async createTimer(duration: number): Promise<Timer> {
     try {
       const id = randomUUID();
       const result = await db.getAllAsync<{maxOrder: number}>('SELECT COALESCE(MAX("order"), -1) as maxOrder FROM timers');
@@ -51,19 +49,19 @@ export const timerRepository = {
       const newOrder = maxOrder + 1;
       
       await db.runAsync(
-        'INSERT INTO timers (id, name, duration, "order") VALUES (?, ?, ?, ?)',
-        [id, name, duration, newOrder]
+        'INSERT INTO timers (id, duration, "order") VALUES (?, ?, ?)',
+        [id, duration, newOrder]
       );
-      return { id, name, duration, order: newOrder };
+      return { id, duration, order: newOrder };
     } catch (error) {
       console.error('Erreur lors de la création du timer:', error);
       throw error;
     }
   },
 
-  async updateTimer(id: string, name: string, duration: number): Promise<void> {
+  async updateTimer(id: string, duration: number): Promise<void> {
     try {
-      await db.runAsync('UPDATE timers SET name = ?, duration = ? WHERE id = ?', [name, duration, id]);
+      await db.runAsync('UPDATE timers SET duration = ? WHERE id = ?', [duration, id]);
     } catch (error) {
       console.error('Erreur lors de la mise à jour du timer:', error);
       throw error;

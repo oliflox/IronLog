@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import AddExercisePopup from "../components/AddExercisePopup";
 import EditExercisePopup from "../components/EditExercisePopup";
 import GenericFlatList from "../components/GenericFlatList";
@@ -14,7 +14,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "WorkoutExercises">;
 
 const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
   const { sessionId } = route.params;
-  const { exercises, isLoading, error, loadExercises, deleteExercise, reorderExercises, updateExercise, createExercise } = useExerciseManager(sessionId);
+  const { exercises, error, loadExercises, deleteExercise, reorderExercises, updateExercise, createExercise } = useExerciseManager(sessionId);
   const { editMode } = useEditMode();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -51,14 +51,6 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
   const handleAddExercise = (name: string, description?: string, imageUrl?: string) => {
     createExercise(name, description, imageUrl);
   };
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   if (error) {
     return (

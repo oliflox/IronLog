@@ -7,7 +7,7 @@ import { theme } from "../styles/theme";
 interface AddTimerPopupProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (name: string, duration: number) => void;
+  onAdd: (duration: number) => void;
 }
 
 const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
@@ -15,19 +15,17 @@ const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
   onClose,
   onAdd,
 }) => {
-  const [name, setName] = useState("");
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
 
   const handleAdd = () => {
-    if (name.trim() && (minutes.trim() || seconds.trim())) {
+    if ((minutes.trim() || seconds.trim())) {
       const minutesValue = parseInt(minutes, 10) || 0;
       const secondsValue = parseInt(seconds, 10) || 0;
       const totalSeconds = minutesValue * 60 + secondsValue;
       
       if (totalSeconds > 0) {
-        onAdd(name.trim(), totalSeconds);
-        setName("");
+        onAdd(totalSeconds);
         setMinutes("");
         setSeconds("");
         onClose();
@@ -36,7 +34,6 @@ const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
   };
 
   const handleCancel = () => {
-    setName("");
     setMinutes("");
     setSeconds("");
     onClose();
@@ -45,7 +42,7 @@ const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
   const minutesValue = parseInt(minutes, 10) || 0;
   const secondsValue = parseInt(seconds, 10) || 0;
   const totalSeconds = minutesValue * 60 + secondsValue;
-  const isValid = name.trim() && totalSeconds > 0;
+  const isValid = totalSeconds > 0;
 
   return (
     <Modal
@@ -65,17 +62,6 @@ const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
 
           <View style={editTimerPopupStyles.content}>
             <View style={editTimerPopupStyles.inputGroup}>
-              <Text style={editTimerPopupStyles.label}>Nom du timer</Text>
-              <TextInput
-                style={editTimerPopupStyles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Entrez le nom du timer"
-                placeholderTextColor={theme.colors.textSecondary}
-              />
-            </View>
-
-            <View style={editTimerPopupStyles.inputGroup}>
               <Text style={editTimerPopupStyles.label}>Durée</Text>
               <View style={editTimerPopupStyles.durationContainer}>
                 <View style={editTimerPopupStyles.timeInputContainer}>
@@ -94,7 +80,7 @@ const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
                     style={editTimerPopupStyles.timeInput}
                     value={seconds}
                     onChangeText={setSeconds}
-                    placeholder="30"
+                    placeholder="0"
                     placeholderTextColor={theme.colors.textSecondary}
                     keyboardType="numeric"
                   />

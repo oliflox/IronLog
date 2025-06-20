@@ -1,6 +1,6 @@
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import {Pressable, Text, View } from 'react-native';
 import AddTimerPopup from "../components/AddTimerPopup";
 import EditTimerPopup from "../components/EditTimerPopup";
 import GlobalAddButton from "../components/GlobalAddButton";
@@ -14,8 +14,8 @@ import { timerStyles } from '../styles/timer';
 type Props = BottomTabScreenProps<RootTabParamList, 'Timer'>;
 
 const TimerScreen = ({ navigation }: Props) => {
-  const { editMode, toggleEditMode } = useEditMode();
-  const { timers, isLoading, error, loadTimers, deleteTimer, reorderTimers, updateTimer, createTimer } = useTimerManager();
+  const { editMode } = useEditMode();
+  const { timers, error, loadTimers, deleteTimer, reorderTimers, updateTimer, createTimer } = useTimerManager();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedTimer, setSelectedTimer] = useState<Timer | null>(null);
   const [addPopupVisible, setAddPopupVisible] = useState(false);
@@ -78,8 +78,8 @@ const TimerScreen = ({ navigation }: Props) => {
     updateTimer(updatedTimer);
   };
 
-  const handleAddTimer = (name: string, duration: number) => {
-    createTimer(name, duration);
+  const handleAddTimer = (duration: number) => {
+    createTimer(duration);
   };
 
   const handleStop = () => {
@@ -98,14 +98,6 @@ const TimerScreen = ({ navigation }: Props) => {
   const handleOpenAddPopup = () => {
     setAddPopupVisible(true);
   };
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   if (error) {
     return (

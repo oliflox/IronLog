@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import EditSessionPopup from "../components/EditSessionPopup";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "WorkoutSessions">;
 
 const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
   const { programId } = route.params;
-  const { sessions, isLoading, error, loadSessions, deleteSession, reorderSessions, updateSession } = useSessionManager(programId);
+  const { sessions, error, loadSessions, deleteSession, reorderSessions, updateSession } = useSessionManager(programId);
   const { editMode } = useEditMode();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
@@ -43,14 +43,6 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
   const handleSaveSession = (updatedSession: Session) => {
     updateSession(updatedSession);
   };
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   if (error) {
     return (

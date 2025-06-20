@@ -6,10 +6,8 @@ import { theme } from "../styles/theme";
 
 interface Timer {
   id: string;
-  name: string;
   duration: number;
   order: number;
-  description?: string;
 }
 
 interface EditTimerPopupProps {
@@ -25,13 +23,11 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
   onClose,
   onSave,
 }) => {
-  const [name, setName] = useState("");
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
 
   React.useEffect(() => {
     if (timer) {
-      setName(timer.name);
       const mins = Math.floor(timer.duration / 60);
       const secs = timer.duration % 60;
       setMinutes(mins.toString());
@@ -40,7 +36,7 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
   }, [timer]);
 
   const handleSave = () => {
-    if (timer && name.trim() && (minutes.trim() || seconds.trim())) {
+    if (timer && (minutes.trim() || seconds.trim())) {
       const minutesValue = parseInt(minutes, 10) || 0;
       const secondsValue = parseInt(seconds, 10) || 0;
       const totalSeconds = minutesValue * 60 + secondsValue;
@@ -48,7 +44,6 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
       if (totalSeconds > 0) {
         onSave({
           ...timer,
-          name: name.trim(),
           duration: totalSeconds,
         });
         onClose();
@@ -58,7 +53,6 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
 
   const handleCancel = () => {
     if (timer) {
-      setName(timer.name);
       const mins = Math.floor(timer.duration / 60);
       const secs = timer.duration % 60;
       setMinutes(mins.toString());
@@ -70,7 +64,7 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
   const minutesValue = parseInt(minutes, 10) || 0;
   const secondsValue = parseInt(seconds, 10) || 0;
   const totalSeconds = minutesValue * 60 + secondsValue;
-  const isValid = name.trim() && totalSeconds > 0;
+  const isValid = totalSeconds > 0;
 
   if (!timer) return null;
 
@@ -92,17 +86,6 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
 
           <View style={editTimerPopupStyles.content}>
             <View style={editTimerPopupStyles.inputGroup}>
-              <Text style={editTimerPopupStyles.label}>Nom du timer</Text>
-              <TextInput
-                style={editTimerPopupStyles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Entrez le nom du timer"
-                placeholderTextColor={theme.colors.textSecondary}
-              />
-            </View>
-
-            <View style={editTimerPopupStyles.inputGroup}>
               <Text style={editTimerPopupStyles.label}>Durée</Text>
               <View style={editTimerPopupStyles.durationContainer}>
                 <View style={editTimerPopupStyles.timeInputContainer}>
@@ -121,7 +104,7 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
                     style={editTimerPopupStyles.timeInput}
                     value={seconds}
                     onChangeText={setSeconds}
-                    placeholder="30"
+                    placeholder="0"
                     placeholderTextColor={theme.colors.textSecondary}
                     keyboardType="numeric"
                   />

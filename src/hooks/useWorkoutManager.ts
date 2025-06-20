@@ -3,7 +3,6 @@ import { Workout, workoutRepository } from '../storage/workoutRepository';
 
 export const useWorkoutManager = () => {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Charger les workouts
@@ -93,15 +92,12 @@ export const useWorkoutManager = () => {
   useEffect(() => {
     const initialLoad = async () => {
       try {
-        setIsLoading(true);
         setError(null);
         const data = await workoutRepository.getAllWorkouts();
         setWorkouts(data);
       } catch (err) {
         setError('Erreur lors du chargement des workouts');
         console.error('Erreur lors du chargement des workouts:', err);
-      } finally {
-        setIsLoading(false);
       }
     };
     
@@ -111,7 +107,6 @@ export const useWorkoutManager = () => {
   return {
     // État
     workouts,
-    isLoading,
     error,
     
     // Actions

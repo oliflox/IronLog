@@ -3,7 +3,6 @@ import { Session, sessionRepository } from '../storage/sessionRepository';
 
 export const useSessionManager = (workoutId: string) => {
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Charger les sessions
@@ -82,15 +81,12 @@ export const useSessionManager = (workoutId: string) => {
   useEffect(() => {
     const initialLoad = async () => {
       try {
-        setIsLoading(true);
         setError(null);
         const data = await sessionRepository.getSessionsByWorkoutId(workoutId);
         setSessions(data);
       } catch (err) {
         setError('Erreur lors du chargement des sessions');
         console.error('Erreur lors du chargement des sessions:', err);
-      } finally {
-        setIsLoading(false);
       }
     };
     
@@ -100,7 +96,6 @@ export const useSessionManager = (workoutId: string) => {
   return {
     // État
     sessions,
-    isLoading,
     error,
     
     // Actions

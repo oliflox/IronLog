@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import EditWorkoutPopup from "../components/EditWorkoutPopup";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
 const WorkoutScreen = ({ navigation }: Props) => {
   const { editMode } = useEditMode();
-  const { workouts, isLoading, error, loadWorkouts, deleteWorkout, reorderWorkouts, updateWorkout } = useWorkoutManager();
+  const { workouts, error, loadWorkouts, deleteWorkout, reorderWorkouts, updateWorkout } = useWorkoutManager();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
 
@@ -42,14 +42,6 @@ const WorkoutScreen = ({ navigation }: Props) => {
   const handleSaveWorkout = (updatedWorkout: Workout) => {
     updateWorkout(updatedWorkout);
   };
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   if (error) {
     return (

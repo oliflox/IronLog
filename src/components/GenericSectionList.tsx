@@ -1,6 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Image, SectionList, SectionListData, Text, View } from "react-native";
+import { Image, Pressable, SectionList, SectionListData, StyleSheet, Text, View } from "react-native";
 import { sectionListStyles } from "../styles/sectionList";
+import { theme } from "../styles/theme";
 
 interface SectionItem {
   id: string;
@@ -14,18 +16,33 @@ interface Section {
   totalReps: number;
   totalWeight: number;
   data: SectionItem[];
+  log?: any; // Pour les actions CRUD
 }
 
 interface GenericSectionListProps {
   sections: Section[];
   headerImage?: string;
   headerTitle?: string;
+  onSectionPress?: (section: Section) => void;
+  onSectionLongPress?: (section: Section) => void;
+  showActions?: boolean;
+  editMode?: boolean;
+  onSetEdit?: (set: SectionItem) => void;
+  onSetDelete?: (set: SectionItem) => void;
+  onDateEdit?: (section: Section) => void;
 }
 
 const GenericSectionList: React.FC<GenericSectionListProps> = ({
   sections,
   headerImage,
   headerTitle,
+  onSectionPress,
+  onSectionLongPress,
+  showActions = false,
+  editMode = false,
+  onSetEdit,
+  onSetDelete,
+  onDateEdit,
 }) => {
   const renderItem = ({ item }: { item: SectionItem }) => (
     <View style={sectionListStyles.itemContainer}>
@@ -33,7 +50,22 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
       <Text style={sectionListStyles.itemText}>
         <Text style={sectionListStyles.itemNumbers}>{item.repetitions}</Text> reps x <Text style={sectionListStyles.itemNumbers}>{item.weight}</Text> Kg
       </Text>
-      <Text style={sectionListStyles.itemText}>edit</Text>
+      {editMode && (
+        <View style={styles.setActions}>
+          <Pressable
+            onPress={() => onSetEdit?.(item)}
+            style={styles.setActionButton}
+          >
+            <Ionicons name="pencil" size={16} color={theme.colors.primary} />
+          </Pressable>
+          <Pressable
+            onPress={() => onSetDelete?.(item)}
+            style={[styles.setActionButton]}
+          >
+            <Ionicons name="trash" size={16} color="#FF3B30" />
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 
@@ -41,21 +73,40 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
     section,
   }: {
     section: SectionListData<SectionItem, Section>;
-  }) => (
-    <View style={sectionListStyles.sectionHeader}>
-      <View style={sectionListStyles.sectionHeaderContent}>
-        <Text style={sectionListStyles.sectionHeaderText}>{section.title}</Text>
-        <View style={sectionListStyles.sectionTotals}>
-          <Text style={sectionListStyles.sectionTotalText}>
-            {section.totalReps} <Text style={sectionListStyles.sectionTotalSubText}>reps</Text>
-          </Text>
-          <Text style={sectionListStyles.sectionTotalText}>
-            {section.totalWeight} <Text style={sectionListStyles.sectionTotalSubText}>kg</Text>
-          </Text>
+  }) => {
+    const sectionData = section as Section;
+    
+    return (
+      <Pressable
+        onPress={() => onSectionPress?.(sectionData)}
+        onLongPress={() => onSectionLongPress?.(sectionData)}
+        style={sectionListStyles.sectionHeader}
+        disabled={!onSectionPress && !onSectionLongPress}
+      >
+        <View style={sectionListStyles.sectionHeaderContent}>
+          <View style={styles.dateContainer}>
+            <Text style={sectionListStyles.sectionHeaderText}>{section.title}</Text>
+            {editMode && (
+              <Pressable
+                onPress={() => onDateEdit?.(sectionData)}
+                style={styles.dateEditButton}
+              >
+                <Ionicons name="pencil" size={16} color={theme.colors.primary} />
+              </Pressable>
+            )}
+          </View>
+          <View style={sectionListStyles.sectionTotals}>
+            <Text style={sectionListStyles.sectionTotalText}>
+              {section.totalReps} <Text style={sectionListStyles.sectionTotalSubText}>reps</Text>
+            </Text>
+            <Text style={sectionListStyles.sectionTotalText}>
+              {section.totalWeight} <Text style={sectionListStyles.sectionTotalSubText}>kg</Text>
+            </Text>
+          </View>
         </View>
-      </View>
-    </View>
-  );
+      </Pressable>
+    );
+  };
 
   const renderHeader = () => {
     if (!headerImage && !headerTitle) return null;
@@ -93,5 +144,25 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
     />
   );
 };
+
+const styles = StyleSheet.create({
+  setActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  setActionButton: {
+    padding: 4,
+    borderRadius: 4,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dateEditButton: {
+    padding: 4,
+    borderRadius: 4,
+  },
+});
 
 export default GenericSectionList;

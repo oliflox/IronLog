@@ -21,9 +21,14 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
   const [addPopupVisible, setAddPopupVisible] = useState(false);
   
   const handleItemPress = (item: any) => {
-    // Navigation vers l'écran de détail de l'exercice ou log des performances
-    console.log('Navigation vers l\'exercice:', item);
-    // navigation.navigate("ExerciseDetail", { exerciseId: item.id });
+    // Navigation vers la page de log de l'exercice
+    navigation.navigate("WorkoutLog", { 
+      exercise: {
+        id: item.id,
+        name: item.name,
+        imageUrl: item.imageUrl
+      }
+    });
   };
 
   const handleDeleteExercise = async (exerciseId: string) => {

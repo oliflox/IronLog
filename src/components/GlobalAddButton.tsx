@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useExerciseManager } from '../hooks/useExerciseManager';
 import { useSessionManager } from '../hooks/useSessionManager';
+import { useTimerManager } from '../hooks/useTimerManager';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { theme } from '../styles/theme';
 import AddExercisePopup from './AddExercisePopup';
 import AddSessionPopup from './AddSessionPopup';
+import AddTimerPopup from './AddTimerPopup';
 import AddWorkoutPopup from './AddWorkoutPopup';
 import GlobalPopup from './GlobalPopup';
 
@@ -35,10 +37,12 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
   const [isAddSessionVisible, setIsAddSessionVisible] = useState(false);
   const [isAddExerciseVisible, setIsAddExerciseVisible] = useState(false);
+  const [isAddTimerVisible, setIsAddTimerVisible] = useState(false);
 
   const { createWorkout } = useWorkoutManager();
   const { createSession } = sessionWorkoutId ? useSessionManager(sessionWorkoutId) : { createSession: null };
   const { createExercise } = exerciseSessionId ? useExerciseManager(exerciseSessionId) : { createExercise: null };
+  const { createTimer } = useTimerManager();
 
   const getButtonConfig = (screen: string | undefined) => {
     switch (screen) {
@@ -89,6 +93,10 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
       setIsAddSessionVisible(true);
     } else if (currentScreen === 'WorkoutExercises') {
       setIsAddExerciseVisible(true);
+    } else if (currentScreen === 'WorkoutLog') {
+      setIsAddTimerVisible(true);
+    } else if (currentScreen === 'Timer') {
+      setIsAddTimerVisible(true);
     } else {
       setPopupMessage(message);
       setIsPopupVisible(true);
@@ -129,6 +137,16 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
     }
   };
 
+  const handleAddTimer = async (name: string, duration: number) => {
+    try {
+      await createTimer(name, duration);
+      setIsAddTimerVisible(false);
+      onRefresh?.();
+    } catch (error) {
+      console.error('Erreur lors de la création du timer:', error);
+    }
+  };
+
   return (
     <>
       <View style={[styles.container, style]}>
@@ -162,6 +180,12 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
         visible={isAddExerciseVisible}
         onClose={() => setIsAddExerciseVisible(false)}
         onAdd={handleAddExercise}
+      />
+      
+      <AddTimerPopup
+        visible={isAddTimerVisible}
+        onClose={() => setIsAddTimerVisible(false)}
+        onAdd={handleAddTimer}
       />
     </>
   );

@@ -16,7 +16,7 @@ import { navigationOptions, navigationStyles } from "../styles/navigation";
 import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
-  Workout: { refresh?: boolean};
+  Workout: { refresh?: boolean };
   WorkoutSessions: { programId: string };
   WorkoutExercises: { sessionId: string };
   WorkoutLog: {
@@ -36,7 +36,7 @@ export type RootStackParamList = {
   };
 };
 
-type RootTabParamList = {
+export type RootTabParamList = {
   Workout: undefined;
   Timer: undefined;
   Add: undefined;
@@ -110,11 +110,20 @@ const WorkoutStack = () => {
 };
 
 const AppNavigator = () => {
-
+  const { editMode, toggleEditMode } = useEditMode();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         ...navigationOptions,
+        headerRight: () => (
+          <Pressable onPress={toggleEditMode} style={{ paddingRight: 15 }}>
+            <Ionicons
+              name={editMode ? "close" : "create-outline"}
+              size={24}
+              color={theme.colors.primary}
+            />
+          </Pressable>
+        ),
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 

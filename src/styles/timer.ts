@@ -54,4 +54,9 @@ export const timerStyles = StyleSheet.create({
     color: theme.colors.text,
     fontWeight: '500',
   },
+  timerItemDuration: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
 }); 

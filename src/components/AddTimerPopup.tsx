@@ -4,66 +4,41 @@ import { Modal, Pressable, Text, TextInput, View } from "react-native";
 import { editTimerPopupStyles } from "../styles/editTimerPopup";
 import { theme } from "../styles/theme";
 
-interface Timer {
-  id: string;
-  name: string;
-  duration: number;
-  order: number;
-  description?: string;
-}
-
-interface EditTimerPopupProps {
+interface AddTimerPopupProps {
   visible: boolean;
-  timer: Timer | null;
   onClose: () => void;
-  onSave: (updatedTimer: Timer) => void;
+  onAdd: (name: string, duration: number) => void;
 }
 
-const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
+const AddTimerPopup: React.FC<AddTimerPopupProps> = ({
   visible,
-  timer,
   onClose,
-  onSave,
+  onAdd,
 }) => {
   const [name, setName] = useState("");
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
 
-  React.useEffect(() => {
-    if (timer) {
-      setName(timer.name);
-      const mins = Math.floor(timer.duration / 60);
-      const secs = timer.duration % 60;
-      setMinutes(mins.toString());
-      setSeconds(secs.toString());
-    }
-  }, [timer]);
-
-  const handleSave = () => {
-    if (timer && name.trim() && (minutes.trim() || seconds.trim())) {
+  const handleAdd = () => {
+    if (name.trim() && (minutes.trim() || seconds.trim())) {
       const minutesValue = parseInt(minutes, 10) || 0;
       const secondsValue = parseInt(seconds, 10) || 0;
       const totalSeconds = minutesValue * 60 + secondsValue;
       
       if (totalSeconds > 0) {
-        onSave({
-          ...timer,
-          name: name.trim(),
-          duration: totalSeconds,
-        });
+        onAdd(name.trim(), totalSeconds);
+        setName("");
+        setMinutes("");
+        setSeconds("");
         onClose();
       }
     }
   };
 
   const handleCancel = () => {
-    if (timer) {
-      setName(timer.name);
-      const mins = Math.floor(timer.duration / 60);
-      const secs = timer.duration % 60;
-      setMinutes(mins.toString());
-      setSeconds(secs.toString());
-    }
+    setName("");
+    setMinutes("");
+    setSeconds("");
     onClose();
   };
 
@@ -71,8 +46,6 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
   const secondsValue = parseInt(seconds, 10) || 0;
   const totalSeconds = minutesValue * 60 + secondsValue;
   const isValid = name.trim() && totalSeconds > 0;
-
-  if (!timer) return null;
 
   return (
     <Modal
@@ -84,7 +57,7 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
       <View style={editTimerPopupStyles.overlay}>
         <View style={editTimerPopupStyles.popup}>
           <View style={editTimerPopupStyles.header}>
-            <Text style={editTimerPopupStyles.title}>Modifier le timer</Text>
+            <Text style={editTimerPopupStyles.title}>Ajouter un timer</Text>
             <Pressable onPress={handleCancel} style={editTimerPopupStyles.closeButton}>
               <Ionicons name="close" size={24} color={theme.colors.text} />
             </Pressable>
@@ -136,11 +109,11 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
               <Text style={editTimerPopupStyles.cancelButtonText}>Annuler</Text>
             </Pressable>
             <Pressable
-              onPress={handleSave}
+              onPress={handleAdd}
               style={[editTimerPopupStyles.saveButton, !isValid && editTimerPopupStyles.saveButtonDisabled]}
               disabled={!isValid}
             >
-              <Text style={editTimerPopupStyles.saveButtonText}>Enregistrer</Text>
+              <Text style={editTimerPopupStyles.saveButtonText}>Ajouter</Text>
             </Pressable>
           </View>
         </View>
@@ -149,4 +122,4 @@ const EditTimerPopup: React.FC<EditTimerPopupProps> = ({
   );
 };
 
-export default EditTimerPopup; 
+export default AddTimerPopup; 

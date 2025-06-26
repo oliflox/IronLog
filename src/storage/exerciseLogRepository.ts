@@ -240,7 +240,51 @@ export const exerciseLogRepository = {
 
   async updateLogDate(logId: string, newDate: string): Promise<void> {
     try {
-      await db.runAsync('UPDATE exercise_logs SET date = ? WHERE id = ?', [newDate, logId]);
+      // Récupérer le log actuel avec ses sets
+      const currentLog = await db.getFirstAsync<{ id: string; exerciseId: string; date: string }>(
+        'SELECT * FROM exercise_logs WHERE id = ?',
+        [logId]
+      );
+
+      if (!currentLog) {
+        throw new Error('Log non trouvé');
+      }
+
+      // Vérifier s'il existe déjà un log avec la nouvelle date
+      const existingLog = await db.getFirstAsync<{ id: string }>(
+        'SELECT id FROM exercise_logs WHERE exerciseId = ? AND date = ? AND id != ?',
+        [currentLog.exerciseId, newDate, logId]
+      );
+
+      if (existingLog) {
+        // Fusionner les sets : récupérer les sets du log actuel
+        const currentSets = await db.getAllAsync<ExerciseSet>(
+          'SELECT * FROM exercise_sets WHERE logId = ? ORDER BY "order"',
+          [logId]
+        );
+
+        // Récupérer l'ordre maximum des sets du log existant
+        const maxOrder = await db.getFirstAsync<{maxOrder: number}>(
+          'SELECT COALESCE(MAX("order"), -1) as maxOrder FROM exercise_sets WHERE logId = ?',
+          [existingLog.id]
+        );
+        const startOrder = (maxOrder?.maxOrder || -1) + 1;
+
+        // Déplacer tous les sets du log actuel vers le log existant
+        for (let i = 0; i < currentSets.length; i++) {
+          const setId = randomUUID();
+          await db.runAsync(
+            'INSERT INTO exercise_sets (id, logId, repetitions, weight, "order") VALUES (?, ?, ?, ?, ?)',
+            [setId, existingLog.id, currentSets[i].repetitions, currentSets[i].weight, startOrder + i]
+          );
+        }
+
+        // Supprimer le log actuel (les sets seront supprimés automatiquement par la contrainte de clé étrangère)
+        await db.runAsync('DELETE FROM exercise_logs WHERE id = ?', [logId]);
+      } else {
+        // Pas de log existant avec cette date, simplement mettre à jour la date
+        await db.runAsync('UPDATE exercise_logs SET date = ? WHERE id = ?', [newDate, logId]);
+      }
     } catch (error) {
       console.error('Erreur lors de la modification de la date:', error);
       throw error;

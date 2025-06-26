@@ -61,7 +61,6 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
 
   const handleAddSet = async (date: string, sets: { repetitions: number; weight: number; order: number }[]) => {
     try {
-      // Puisque nous n'ajoutons qu'un seul set à la fois
       await addSet(date, sets[0]);
     } catch (error) {
       console.error('Erreur lors de l\'ajout du set:', error);

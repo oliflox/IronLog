@@ -77,12 +77,7 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
     const sectionData = section as Section;
     
     return (
-      <Pressable
-        onPress={() => onSectionPress?.(sectionData)}
-        onLongPress={() => onSectionLongPress?.(sectionData)}
-        style={sectionListStyles.sectionHeader}
-        disabled={!onSectionPress && !onSectionLongPress}
-      >
+      <View style={sectionListStyles.sectionHeader}>
         <View style={sectionListStyles.sectionHeaderContent}>
           <View style={styles.dateContainer}>
             <Text style={sectionListStyles.sectionHeaderText}>{section.title}</Text>
@@ -104,7 +99,7 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
             </Text>
           </View>
         </View>
-      </Pressable>
+      </View>
     );
   };
 

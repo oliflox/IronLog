@@ -62,7 +62,10 @@ const WorkoutScreen = ({ navigation }: Props) => {
         editMode={editMode}
         onUpdateItem={handleUpdateWorkout}
       />
-      <GlobalAddButton onRefresh={loadWorkouts} />
+      <GlobalAddButton 
+        actionType="workout"
+        onRefresh={loadWorkouts} 
+      />
       <EditWorkoutPopup
         visible={editPopupVisible}
         workout={selectedWorkout}

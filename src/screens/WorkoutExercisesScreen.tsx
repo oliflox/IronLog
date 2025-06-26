@@ -77,6 +77,7 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
         onUpdateItem={handleUpdateExercise}
       />
       <GlobalAddButton 
+        actionType="exercise"
         onRefresh={loadExercises}
         exerciseSessionId={sessionId}
       />

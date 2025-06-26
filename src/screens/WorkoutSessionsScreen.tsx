@@ -64,6 +64,7 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
         onUpdateItem={handleUpdateSession}
       />
       <GlobalAddButton 
+        actionType="session"
         onRefresh={loadSessions}
         sessionWorkoutId={programId}
       />

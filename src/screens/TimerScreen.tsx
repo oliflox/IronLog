@@ -1,6 +1,6 @@
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
-import {Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import AddTimerPopup from "../components/AddTimerPopup";
 import EditTimerPopup from "../components/EditTimerPopup";
 import GlobalAddButton from "../components/GlobalAddButton";
@@ -137,7 +137,10 @@ const TimerScreen = ({ navigation }: Props) => {
         onUpdateItem={handleUpdateTimer}
       />
       
-      <GlobalAddButton onRefresh={loadTimers} />
+      <GlobalAddButton 
+        actionType="timer"
+        onRefresh={loadTimers} 
+      />
       <EditTimerPopup
         visible={editPopupVisible}
         timer={selectedTimer}

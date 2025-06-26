@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, Pressable, SectionList, SectionListData, StyleSheet, Text, View } from "react-native";
 import { sectionListStyles } from "../styles/sectionList";
 import { theme } from "../styles/theme";
@@ -32,7 +32,7 @@ interface GenericSectionListProps {
   onDateEdit?: (section: Section) => void;
 }
 
-const GenericSectionList: React.FC<GenericSectionListProps> = ({
+const GenericSectionList: React.FC<GenericSectionListProps> = React.memo(({
   sections,
   headerImage,
   headerTitle,
@@ -103,7 +103,7 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
     );
   };
 
-  const renderHeader = () => {
+  const renderHeader = useMemo(() => {
     if (!headerImage && !headerTitle) return null;
 
     const firstLetter = headerTitle ? headerTitle.charAt(0).toUpperCase() : "";
@@ -125,7 +125,7 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
         <Text style={sectionListStyles.headerName}>{headerTitle}</Text>
       </View>
     );
-  };
+  }, [headerImage, headerTitle]);
 
   return (
     <SectionList
@@ -138,7 +138,9 @@ const GenericSectionList: React.FC<GenericSectionListProps> = ({
       style={sectionListStyles.listContainer}
     />
   );
-};
+});
+
+GenericSectionList.displayName = 'GenericSectionList';
 
 const styles = StyleSheet.create({
   setActions: {

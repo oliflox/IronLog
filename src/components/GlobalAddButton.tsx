@@ -1,12 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useExerciseManager } from '../hooks/useExerciseManager';
 import { useSessionManager } from '../hooks/useSessionManager';
 import { useTimerManager } from '../hooks/useTimerManager';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
-import { RootStackParamList } from '../navigation/AppNavigator';
 import { theme } from '../styles/theme';
 import AddExercisePopup from './AddExercisePopup';
 import AddSessionPopup from './AddSessionPopup';
@@ -14,7 +12,10 @@ import AddTimerPopup from './AddTimerPopup';
 import AddWorkoutPopup from './AddWorkoutPopup';
 import GlobalPopup from './GlobalPopup';
 
+type ActionType = 'workout' | 'session' | 'exercise' | 'timer' | 'calendar' | 'profile';
+
 interface GlobalAddButtonProps {
+  actionType: ActionType;
   onRefresh?: () => void;
   sessionWorkoutId?: string; // Pour les sessions, on a besoin de l'ID du workout parent
   exerciseSessionId?: string; // Pour les exercices, on a besoin de l'ID de la session parent
@@ -22,16 +23,12 @@ interface GlobalAddButtonProps {
 }
 
 const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({ 
+  actionType,
   onRefresh,
   sessionWorkoutId,
   exerciseSessionId,
   style
 }) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const state = navigation.getState();
-  const currentRoute = state?.routes[state?.index ?? 0];
-  const currentScreen = currentRoute?.name;
-  
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const [isAddWorkoutVisible, setIsAddWorkoutVisible] = useState(false);
@@ -44,34 +41,34 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   const { createExercise } = exerciseSessionId ? useExerciseManager(exerciseSessionId) : { createExercise: null };
   const { createTimer } = useTimerManager();
 
-  const getButtonConfig = (screen: string | undefined) => {
-    switch (screen) {
-      case 'Calendar':
+  const getButtonConfig = (type: ActionType) => {
+    switch (type) {
+      case 'calendar':
         return {
           icon: "share-social" as const,
           message: "Partage du calendrier d'entraînement"
         };
-      case 'Workout':
+      case 'workout':
         return {
           icon: "add" as const,
-          message: "Ajout d'un nouvel exercice"
+          message: "Ajout d'un nouveau workout"
         };
-      case 'WorkoutSessions':
+      case 'session':
         return {
           icon: "add" as const,
           message: "Ajout d'une nouvelle session"
         };
-      case 'WorkoutExercises':
+      case 'exercise':
         return {
           icon: "add" as const,
           message: "Ajout d'un nouvel exercice"
         };
-      case 'Timer':
+      case 'timer':
         return {
           icon: "add" as const,
           message: "Création d'un nouveau timer"
         };
-      case 'Profil':
+      case 'profile':
         return {
           icon: "add" as const,
           message: "Ajout d'une nouvelle statistique"
@@ -84,18 +81,16 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
     }
   };
 
-  const { icon, message } = getButtonConfig(currentScreen);
+  const { icon, message } = getButtonConfig(actionType);
 
   const handlePress = () => {
-    if (currentScreen === 'Workout') {
+    if (actionType === 'workout') {
       setIsAddWorkoutVisible(true);
-    } else if (currentScreen === 'WorkoutSessions') {
+    } else if (actionType === 'session') {
       setIsAddSessionVisible(true);
-    } else if (currentScreen === 'WorkoutExercises') {
+    } else if (actionType === 'exercise') {
       setIsAddExerciseVisible(true);
-    } else if (currentScreen === 'WorkoutLog') {
-      setIsAddTimerVisible(true);
-    } else if (currentScreen === 'Timer') {
+    } else if (actionType === 'timer') {
       setIsAddTimerVisible(true);
     } else {
       setPopupMessage(message);

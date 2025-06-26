@@ -231,7 +231,30 @@ export const exerciseLogRepository = {
 
   async deleteSet(setId: string): Promise<void> {
     try {
+      // Récupérer le logId avant de supprimer le set
+      const setInfo = await db.getFirstAsync<{ logId: string }>(
+        'SELECT logId FROM exercise_sets WHERE id = ?',
+        [setId]
+      );
+
+      if (!setInfo) {
+        throw new Error('Set non trouvé');
+      }
+
+      // Supprimer le set
       await db.runAsync('DELETE FROM exercise_sets WHERE id = ?', [setId]);
+
+      // Vérifier s'il reste des sets pour ce log
+      const remainingSets = await db.getAllAsync<{ id: string }>(
+        'SELECT id FROM exercise_sets WHERE logId = ?',
+        [setInfo.logId]
+      );
+
+      // Si plus aucun set, supprimer le log entier
+      if (remainingSets.length === 0) {
+        await db.runAsync('DELETE FROM exercise_logs WHERE id = ?', [setInfo.logId]);
+        console.log('Log supprimé car plus aucun set');
+      }
     } catch (error) {
       console.error('Erreur lors de la suppression du set:', error);
       throw error;
@@ -296,6 +319,61 @@ export const exerciseLogRepository = {
       await db.runAsync('UPDATE exercise_sets SET repetitions = ?, weight = ? WHERE id = ?', [repetitions, weight, setId]);
     } catch (error) {
       console.error('Erreur lors de la modification du set:', error);
+      throw error;
+    }
+  },
+
+  async getLogsByDate(date: string): Promise<ExerciseLogWithExercise[]> {
+    try {
+      const logs = await db.getAllAsync<{ id: string; exerciseId: string; date: string }>(
+        'SELECT * FROM exercise_logs WHERE date = ? ORDER BY exerciseId',
+        [date]
+      );
+
+      const result: ExerciseLogWithExercise[] = [];
+      
+      for (const log of logs) {
+        // Récupérer les informations de l'exercice
+        const exercise = await db.getFirstAsync<{ name: string; imageUrl?: string }>(
+          'SELECT name, imageUrl FROM exercises WHERE id = ?',
+          [log.exerciseId]
+        );
+
+        if (!exercise) {
+          console.warn(`Exercice non trouvé pour l'ID: ${log.exerciseId}`);
+          continue;
+        }
+
+        // Récupérer les sets
+        const sets = await db.getAllAsync<ExerciseSet>(
+          'SELECT * FROM exercise_sets WHERE logId = ? ORDER BY "order"',
+          [log.id]
+        );
+        
+        result.push({
+          ...log,
+          sets,
+          exerciseName: exercise.name,
+          exerciseImageUrl: exercise.imageUrl
+        });
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des logs par date:', error);
+      throw error;
+    }
+  },
+
+  async getDatesWithLogs(): Promise<string[]> {
+    try {
+      const dates = await db.getAllAsync<{ date: string }>(
+        'SELECT DISTINCT date FROM exercise_logs ORDER BY date DESC'
+      );
+      
+      return dates.map(d => d.date);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des dates avec logs:', error);
       throw error;
     }
   },

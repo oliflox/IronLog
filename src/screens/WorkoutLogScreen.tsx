@@ -180,28 +180,30 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     };
   };
 
-  const sections: Section[] = logs.map((historyItem) => {
-    const totalReps = historyItem.sets.reduce((acc, set) => acc + set.repetitions, 0);
-    const totalWeight = historyItem.sets.reduce((acc, set) => acc + set.weight, 0);
+  const sections: Section[] = logs
+    .map((historyItem) => {
+      const totalReps = historyItem.sets.reduce((acc, set) => acc + set.repetitions, 0);
+      const totalWeight = historyItem.sets.reduce((acc, set) => acc + set.weight, 0);
 
-    const date = new Date(historyItem.date);
-    const day = date.getDate();
-    const month = date.toLocaleString('fr-FR', { month: 'short' });
-    const year = date.getFullYear();
+      const date = new Date(historyItem.date);
+      const day = date.getDate();
+      const month = date.toLocaleString('fr-FR', { month: 'short' });
+      const year = date.getFullYear();
 
-    return {
-      title: `${day} ${month} ${year}`,
-      totalReps,
-      totalWeight,
-      data: historyItem.sets.map((set, index) => ({
-        id: set.id,
-        repetitions: set.repetitions,
-        weight: set.weight,
-        setNumber: index + 1,
-      })),
-      log: historyItem,
-    };
-  });
+      return {
+        title: `${day} ${month} ${year}`,
+        totalReps,
+        totalWeight,
+        data: historyItem.sets.map((set, index) => ({
+          id: set.id,
+          repetitions: set.repetitions,
+          weight: set.weight,
+          setNumber: index + 1,
+        })),
+        log: historyItem,
+      };
+    })
+    .filter(section => section.data.length > 0); // Filtrer les sections sans sets
 
   if (error) {
     return (

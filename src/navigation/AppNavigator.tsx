@@ -47,13 +47,19 @@ const WorkoutStack = () => {
 
   return (
     <Stack.Navigator
-      screenOptions={({ navigation }) => ({
+      screenOptions={({ navigation, route }) => ({
         ...navigationOptions,
-        headerLeft: () => (
-          <Pressable onPress={() => navigation.goBack()}>
-            <Ionicons style={navigationStyles.backButton} name="chevron-back" />
-          </Pressable>
-        ),
+        headerLeft: () => {
+          if (route.name === 'Workout') {
+            return null;
+          }
+          
+          return (
+            <Pressable onPress={() => navigation.goBack()}>
+              <Ionicons style={navigationStyles.backButton} name="chevron-back" />
+            </Pressable>
+          );
+        },
         headerRight: () => (
           <Pressable onPress={toggleEditMode} style={{ paddingRight: 15 }}>
             <Ionicons
@@ -107,15 +113,21 @@ const AppNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         ...navigationOptions,
-        headerRight: () => (
-          <Pressable onPress={toggleEditMode} style={{ paddingRight: 15 }}>
-            <Ionicons
-              name={editMode ? "close" : "create-outline"}
-              size={24}
-              color={theme.colors.primary}
-            />
-          </Pressable>
-        ),
+        headerRight: () => {
+          if (route.name === 'Calendar') {
+            return null;
+          }
+          
+          return (
+            <Pressable onPress={toggleEditMode} style={{ paddingRight: 15 }}>
+              <Ionicons
+                name={editMode ? "close" : "create-outline"}
+                size={24}
+                color={theme.colors.primary}
+              />
+            </Pressable>
+          );
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 

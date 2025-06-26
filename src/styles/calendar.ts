@@ -39,6 +39,9 @@ export const calendarStyles = StyleSheet.create({
     color: theme.colors.textSecondary,
     fontSize: theme.typography.fontSize.sm,
   },
+  setsContainer: {
+    marginTop: theme.spacing.xs,
+  },
 });
 
 export const calendarTheme = {

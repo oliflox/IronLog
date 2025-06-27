@@ -6,8 +6,16 @@ import { ActivityIndicator, Alert, Image, ScrollView, SectionList, StyleSheet, T
 import { useExerciseManager } from "../hooks/useExerciseManager";
 import { useExerciseTemplates } from "../hooks/useExerciseTemplates";
 import { RootStackParamList } from "../navigation/AppNavigator";
+import { ExerciseType } from "../storage/exerciseRepository";
 import { ExerciseTemplate } from "../storage/exerciseTemplateRepository";
 import { theme } from "../styles/theme";
+
+const EXERCISE_TYPES: ExerciseType[] = ['weight_reps', 'time'];
+
+const EXERCISE_TYPE_LABELS: Record<ExerciseType, string> = {
+  'weight_reps': 'Poids et répétitions',
+  'time': 'Temps'
+};
 
 type Props = NativeStackScreenProps<RootStackParamList, "ExerciseLibrary">;
 
@@ -25,11 +33,13 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
   const [filteredSections, setFilteredSections] = useState<Section[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showMuscleGroupPicker, setShowMuscleGroupPicker] = useState(false);
+  const [showTypePicker, setShowTypePicker] = useState(false);
   const [newExercise, setNewExercise] = useState({
     name: "",
     muscleGroup: "",
     description: "",
-    imageUrl: ""
+    imageUrl: "",
+    type: "" as ExerciseType | ""
   });
 
   useEffect(() => {
@@ -101,12 +111,19 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
       return;
     }
 
+    // Vérifier si le type et la catégorie sont sélectionnés
+    if (!newExercise.type) {
+      Alert.alert("Erreur", "Le type d'exercice est obligatoire");
+      return;
+    }
+
     try {
       await createTemplate(
         newExercise.name.trim(),
         newExercise.muscleGroup.trim(),
         newExercise.description.trim() || undefined,
-        newExercise.imageUrl.trim() || undefined
+        newExercise.imageUrl.trim() || undefined,
+        newExercise.type
       );
       
       // Réinitialiser le formulaire
@@ -114,7 +131,8 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
         name: "",
         muscleGroup: "",
         description: "",
-        imageUrl: ""
+        imageUrl: "",
+        type: "" as ExerciseType | ""
       });
       
       setShowAddModal(false);
@@ -133,7 +151,8 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
       name: "",
       muscleGroup: "",
       description: "",
-      imageUrl: ""
+      imageUrl: "",
+      type: "" as ExerciseType | ""
     });
     setShowAddModal(false);
   };
@@ -141,6 +160,11 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
   const handleSelectMuscleGroup = (muscleGroup: string) => {
     setNewExercise({...newExercise, muscleGroup});
     setShowMuscleGroupPicker(false);
+  };
+
+  const handleSelectType = (type: ExerciseType) => {
+    setNewExercise({...newExercise, type});
+    setShowTypePicker(false);
   };
 
   const handlePickImage = async () => {
@@ -309,6 +333,20 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
                 <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} style={styles.chevronIcon} />
               </TouchableOpacity>
               
+              {/* Sélecteur de type d'exercice */}
+              <TouchableOpacity
+                style={styles.modalInput}
+                onPress={() => setShowTypePicker(true)}
+              >
+                <Text style={[
+                  styles.placeholderText,
+                  newExercise.type ? styles.selectedText : {}
+                ]}>
+                  {newExercise.type ? EXERCISE_TYPE_LABELS[newExercise.type] : "Sélectionner le type d'exercice *"}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} style={styles.chevronIcon} />
+              </TouchableOpacity>
+              
               <TextInput
                 style={[styles.modalInput, styles.textArea]}
                 placeholder="Description (optionnel)"
@@ -376,6 +414,32 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
             <TouchableOpacity
               style={styles.pickerCancelButton}
               onPress={() => setShowMuscleGroupPicker(false)}
+            >
+              <Text style={styles.pickerCancelText}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Picker de type d'exercice */}
+      {showTypePicker && (
+        <View style={styles.pickerOverlay}>
+          <View style={styles.pickerContainer}>
+            <Text style={styles.pickerTitle}>Sélectionner le type d'exercice</Text>
+            <ScrollView style={styles.pickerScrollView}>
+              {EXERCISE_TYPES.map((type) => (
+                <TouchableOpacity
+                  key={type}
+                  style={styles.pickerOption}
+                  onPress={() => handleSelectType(type)}
+                >
+                  <Text style={styles.pickerOptionText}>{EXERCISE_TYPE_LABELS[type]}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.pickerCancelButton}
+              onPress={() => setShowTypePicker(false)}
             >
               <Text style={styles.pickerCancelText}>Annuler</Text>
             </TouchableOpacity>

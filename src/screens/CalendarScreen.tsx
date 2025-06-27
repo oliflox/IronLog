@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Alert, FlatList, RefreshControl, Share, Text, TouchableOpacity, View } from 'react-native';
@@ -37,6 +38,21 @@ const CalendarScreen = ({ navigation }: Props) => {
     refreshAll,
     lastSelectedDate 
   } = useCalendarLogs();
+
+  // Recharger les données quand l'utilisateur revient sur l'écran
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadData = async () => {
+        try {
+          await refreshAll();
+        } catch (error) {
+          console.error('Erreur lors du rechargement des données:', error);
+        }
+      };
+      
+      loadData();
+    }, [refreshAll])
+  );
 
   // Préparation des dates marquées pour le calendrier
   const markedDates = datesWithLogs.reduce((acc, date) => {
@@ -80,6 +96,30 @@ const CalendarScreen = ({ navigation }: Props) => {
     }
   };
 
+  const formatSetDisplay = (set: any, exerciseType: string) => {
+    if (exerciseType === 'time') {
+      // Format pour les exercices de temps
+      const duration = set.duration || 0;
+      const minutes = Math.floor(duration / 60);
+      const seconds = duration % 60;
+      return `Set ${set.order + 1}: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      // Format pour les exercices de poids/reps
+      return `Set ${set.order + 1}: ${set.repetitions || 0} reps × ${set.weight || 0}kg`;
+    }
+  };
+
+  const formatSetForShare = (set: any, exerciseType: string) => {
+    if (exerciseType === 'time') {
+      const duration = set.duration || 0;
+      const minutes = Math.floor(duration / 60);
+      const seconds = duration % 60;
+      return `  Set ${set.order + 1}: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      return `  Set ${set.order + 1}: ${set.repetitions || 0} reps × ${set.weight || 0}kg`;
+    }
+  };
+
   const handleShare = async () => {
     if (!selected) {
       Alert.alert('Aucune date sélectionnée', 'Veuillez sélectionner une date pour partager les données.');
@@ -107,7 +147,7 @@ const CalendarScreen = ({ navigation }: Props) => {
       selectedDateLogs.forEach((log, index) => {
         shareContent += `🏋️ ${log.exerciseName}\n`;
         log.sets.forEach((set, setIndex) => {
-          shareContent += `  Set ${setIndex + 1}: ${set.repetitions} reps × ${set.weight}kg\n`;
+          shareContent += formatSetForShare(set, log.exerciseType) + '\n';
         });
         if (index < selectedDateLogs.length - 1) {
           shareContent += '\n';
@@ -132,7 +172,7 @@ const CalendarScreen = ({ navigation }: Props) => {
       <View style={calendarStyles.setsContainer}>
         {item.sets.map((set, index) => (
           <Text key={set.id} style={calendarStyles.exerciseDetails}>
-            Set {index + 1}: {set.repetitions} reps × {set.weight}kg
+            {formatSetDisplay(set, item.exerciseType)}
           </Text>
         ))}
       </View>

@@ -20,6 +20,7 @@ export interface ExerciseLog {
 export interface ExerciseLogWithExercise extends ExerciseLog {
   exerciseName: string;
   exerciseImageUrl?: string;
+  exerciseType: string;
 }
 
 export const exerciseLogRepository = {
@@ -53,8 +54,8 @@ export const exerciseLogRepository = {
 
   async getLogsWithExerciseInfo(exerciseId: string): Promise<ExerciseLogWithExercise[]> {
     try {
-      const exercise = await db.getFirstAsync<{ name: string; imageUrl?: string }>(
-        'SELECT name, imageUrl FROM exercises WHERE id = ?',
+      const exercise = await db.getFirstAsync<{ name: string; imageUrl?: string; type: string }>(
+        'SELECT name, imageUrl, type FROM exercises WHERE id = ?',
         [exerciseId]
       );
 
@@ -67,7 +68,8 @@ export const exerciseLogRepository = {
       return logs.map(log => ({
         ...log,
         exerciseName: exercise.name,
-        exerciseImageUrl: exercise.imageUrl
+        exerciseImageUrl: exercise.imageUrl,
+        exerciseType: exercise.type
       }));
     } catch (error) {
       console.error('Erreur lors de la récupération des logs avec info exercice:', error);
@@ -336,8 +338,8 @@ export const exerciseLogRepository = {
       
       for (const log of logs) {
         // Récupérer les informations de l'exercice
-        const exercise = await db.getFirstAsync<{ name: string; imageUrl?: string }>(
-          'SELECT name, imageUrl FROM exercises WHERE id = ?',
+        const exercise = await db.getFirstAsync<{ name: string; imageUrl?: string; type: string }>(
+          'SELECT name, imageUrl, type FROM exercises WHERE id = ?',
           [log.exerciseId]
         );
 
@@ -356,7 +358,8 @@ export const exerciseLogRepository = {
           ...log,
           sets,
           exerciseName: exercise.name,
-          exerciseImageUrl: exercise.imageUrl
+          exerciseImageUrl: exercise.imageUrl,
+          exerciseType: exercise.type
         });
       }
 
@@ -369,8 +372,12 @@ export const exerciseLogRepository = {
 
   async getDatesWithLogs(): Promise<string[]> {
     try {
+      // Récupérer seulement les dates qui ont des logs avec des exercices existants
       const dates = await db.getAllAsync<{ date: string }>(
-        'SELECT DISTINCT date FROM exercise_logs ORDER BY date DESC'
+        `SELECT DISTINCT el.date 
+         FROM exercise_logs el 
+         INNER JOIN exercises e ON el.exerciseId = e.id 
+         ORDER BY el.date DESC`
       );
       
       return dates.map(d => d.date);
@@ -473,6 +480,20 @@ export const exerciseLogRepository = {
       return lastLog?.date || null;
     } catch (error) {
       console.error('Erreur lors de la récupération de la date du dernier entraînement:', error);
+      throw error;
+    }
+  },
+
+  async cleanupOrphanedLogs(): Promise<void> {
+    try {
+      // Supprimer les logs qui référencent des exercices supprimés
+      await db.runAsync(
+        `DELETE FROM exercise_logs 
+         WHERE exerciseId NOT IN (SELECT id FROM exercises)`
+      );
+      console.log('Logs orphelins nettoyés');
+    } catch (error) {
+      console.error('Erreur lors du nettoyage des logs orphelins:', error);
       throw error;
     }
   }

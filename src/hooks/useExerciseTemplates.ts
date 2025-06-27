@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ExerciseType } from '../storage/exerciseRepository';
 import { ExerciseTemplate, exerciseTemplateRepository } from '../storage/exerciseTemplateRepository';
 
 export const useExerciseTemplates = () => {
@@ -38,9 +39,9 @@ export const useExerciseTemplates = () => {
     }
   };
 
-  const createTemplate = async (name: string, muscleGroup: string, description?: string, imageUrl?: string): Promise<void> => {
+  const createTemplate = async (name: string, muscleGroup: string, description?: string, imageUrl?: string, customType?: ExerciseType): Promise<void> => {
     try {
-      await exerciseTemplateRepository.createTemplate(name, muscleGroup, description, imageUrl);
+      await exerciseTemplateRepository.createTemplate(name, muscleGroup, description, imageUrl, customType);
       await loadTemplates(); // Recharger la liste
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la création du template');

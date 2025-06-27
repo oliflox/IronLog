@@ -58,9 +58,25 @@ export const useCalendarLogs = () => {
     }
   }, [loadDatesWithLogs, loadLogsForDate, lastSelectedDate]);
 
-  // Charger les dates avec logs seulement au montage du composant
+  // Fonction pour forcer la mise à jour des dates avec logs
+  const refreshDates = useCallback(async () => {
+    await loadDatesWithLogs();
+  }, [loadDatesWithLogs]);
+
+  // Charger les dates avec logs au montage du composant
   useEffect(() => {
-    loadDatesWithLogs();
+    const initializeCalendar = async () => {
+      try {
+        // Nettoyer d'abord les logs orphelins
+        await exerciseLogRepository.cleanupOrphanedLogs();
+        // Puis charger les dates avec logs
+        await loadDatesWithLogs();
+      } catch (error) {
+        console.error('Erreur lors de l\'initialisation du calendrier:', error);
+      }
+    };
+    
+    initializeCalendar();
   }, []); // Dépendance vide pour ne charger qu'une fois
 
   return {
@@ -70,7 +86,7 @@ export const useCalendarLogs = () => {
     loading,
     loadLogsForDate,
     clearSelectedDateLogs,
-    refreshDates: loadDatesWithLogs,
+    refreshDates,
     refreshAll,
     lastSelectedDate
   };

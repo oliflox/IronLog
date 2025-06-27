@@ -87,10 +87,31 @@ export const exerciseTemplateRepository = {
     }
   },
 
-  async createTemplate(name: string, muscleGroup: string, description?: string, imageUrl?: string): Promise<ExerciseTemplate> {
+  async createTemplate(name: string, muscleGroup: string, description?: string, imageUrl?: string, customType?: ExerciseType): Promise<ExerciseTemplate> {
     try {
       const id = randomUUID();
-      const { type, category } = getExerciseTypeAndCategory(muscleGroup);
+      
+      // Utiliser le type personnalisé s'il est fourni, sinon utiliser la logique automatique
+      let type: ExerciseType;
+      
+      if (customType) {
+        type = customType;
+      } else {
+        const autoTypeAndCategory = getExerciseTypeAndCategory(muscleGroup);
+        type = autoTypeAndCategory.type;
+      }
+      
+      // Déterminer la catégorie basée sur le type et le groupe musculaire
+      let category: ExerciseCategory;
+      if (type === 'time') {
+        if (muscleGroup === 'Cardio') {
+          category = 'Cardio';
+        } else {
+          category = 'Autres';
+        }
+      } else {
+        category = 'Musculation';
+      }
       
       await db.runAsync(
         'INSERT INTO exercise_templates (id, name, muscleGroup, description, imageUrl, isDefault, type, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',

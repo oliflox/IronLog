@@ -42,6 +42,25 @@ export const calendarStyles = StyleSheet.create({
   setsContainer: {
     marginTop: theme.spacing.xs,
   },
+  shareButton: {
+    position: 'absolute',
+    bottom: theme.spacing.lg,
+    right: theme.spacing.lg,
+    backgroundColor: theme.colors.primary,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+  },
 });
 
 export const calendarTheme = {

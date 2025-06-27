@@ -1,13 +1,13 @@
 //////////// A Venir ////////////
 
-login + sign up
-Sync avec l'api
+login(email, mdp, rester connecter,forgot password) + sign up (email, nom, prenom, mdp)
+Sync avec l'api au chargement, quand ? a chaque requete ? modifs ? et verif a chaque demarage ? offline ? 
 
 
 //////////// A Refaire ////////////
 
 Tout les popUp a globaliser >  add/edit/suppr button/popUp, 
-liste exercices + ajouter exercice = afficher liste exo pas popup add
+liste exercices + ajouter exercice = afficher liste exo a part, pas popup add
 
 
 //////////// A Corriger ////////////

@@ -14,21 +14,12 @@ export const useCalendarLogs = () => {
       setLoading(true);
       const dates = await exerciseLogRepository.getDatesWithLogs();
       setDatesWithLogs(dates);
-      
-      // Si une date était sélectionnée, recharger ses logs
-      if (lastSelectedDate && dates.includes(lastSelectedDate)) {
-        await loadLogsForDate(lastSelectedDate);
-      } else if (lastSelectedDate && !dates.includes(lastSelectedDate)) {
-        // Si la date sélectionnée n'a plus de logs, vider la sélection
-        setSelectedDateLogs([]);
-        setLastSelectedDate('');
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement des dates');
     } finally {
       setLoading(false);
     }
-  }, [lastSelectedDate]);
+  }, []);
 
   const loadLogsForDate = useCallback(async (date: string) => {
     try {
@@ -55,12 +46,22 @@ export const useCalendarLogs = () => {
   }, []);
 
   const refreshAll = useCallback(async () => {
+    // Sauvegarder la date actuellement sélectionnée
+    const currentSelectedDate = lastSelectedDate;
+    
+    // Recharger seulement les dates avec logs
     await loadDatesWithLogs();
-  }, [loadDatesWithLogs]);
+    
+    // Si une date était sélectionnée, recharger ses logs
+    if (currentSelectedDate) {
+      await loadLogsForDate(currentSelectedDate);
+    }
+  }, [loadDatesWithLogs, loadLogsForDate, lastSelectedDate]);
 
+  // Charger les dates avec logs seulement au montage du composant
   useEffect(() => {
     loadDatesWithLogs();
-  }, [loadDatesWithLogs]);
+  }, []); // Dépendance vide pour ne charger qu'une fois
 
   return {
     datesWithLogs,

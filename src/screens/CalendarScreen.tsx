@@ -1,7 +1,7 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, FlatList, RefreshControl, Share, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useCalendarLogs } from '../hooks/useCalendarLogs';
 import { ExerciseLogWithExercise } from '../storage/exerciseLogRepository';
@@ -38,21 +38,6 @@ const CalendarScreen = ({ navigation }: Props) => {
     lastSelectedDate 
   } = useCalendarLogs();
 
-  // Synchroniser la date sélectionnée avec le hook
-  useEffect(() => {
-    if (lastSelectedDate !== selected) {
-      setSelected(lastSelectedDate);
-    }
-  }, [lastSelectedDate, selected]);
-
-  // Rafraîchir les données quand on revient sur l'écran
-  useFocusEffect(
-    React.useCallback(() => {
-      console.log('Focus sur CalendarScreen - rafraîchissement des données');
-      refreshAll();
-    }, [refreshAll])
-  );
-
   // Préparation des dates marquées pour le calendrier
   const markedDates = datesWithLogs.reduce((acc, date) => {
     acc[date] = {
@@ -74,16 +59,15 @@ const CalendarScreen = ({ navigation }: Props) => {
   const handleDayPress = async (day: { dateString: string }) => {
     const dateString = day.dateString;
     console.log('Clic sur la date:', dateString);
-    console.log('Dates avec logs:', datesWithLogs);
     
     setSelected(dateString);
     
-    if (datesWithLogs.includes(dateString)) {
-      console.log('Chargement des logs pour:', dateString);
+    // Toujours essayer de charger les logs pour cette date
+    try {
       await loadLogsForDate(dateString);
-    } else {
-      console.log('Aucun log pour cette date, vidage de la sélection');
-      clearSelectedDateLogs();
+    } catch (error) {
+      console.log('Aucun log pour cette date ou erreur de chargement');
+      // La liste sera vide naturellement si pas de données
     }
   };
 
@@ -93,6 +77,52 @@ const CalendarScreen = ({ navigation }: Props) => {
       await refreshAll();
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!selected) {
+      Alert.alert('Aucune date sélectionnée', 'Veuillez sélectionner une date pour partager les données.');
+      return;
+    }
+
+    if (selectedDateLogs.length === 0) {
+      Alert.alert('Aucune donnée', 'Aucun exercice enregistré pour cette date.');
+      return;
+    }
+
+    try {
+      // Formater la date
+      const dateObj = new Date(selected);
+      const formattedDate = dateObj.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      // Créer le contenu à partager
+      let shareContent = `📅 Entraînement du ${formattedDate}\n\n`;
+      
+      selectedDateLogs.forEach((log, index) => {
+        shareContent += `🏋️ ${log.exerciseName}\n`;
+        log.sets.forEach((set, setIndex) => {
+          shareContent += `  Set ${setIndex + 1}: ${set.repetitions} reps × ${set.weight}kg\n`;
+        });
+        if (index < selectedDateLogs.length - 1) {
+          shareContent += '\n';
+        }
+      });
+
+      shareContent += '\n💪 Partagé depuis IronLog';
+
+      await Share.share({
+        message: shareContent,
+        title: `Entraînement du ${formattedDate}`,
+      });
+    } catch (error) {
+      console.error('Erreur lors du partage:', error);
+      Alert.alert('Erreur', 'Impossible de partager les données.');
     }
   };
 
@@ -151,6 +181,15 @@ const CalendarScreen = ({ navigation }: Props) => {
           }
         />
       )}
+
+      {/* Bouton de partage flottant */}
+      <TouchableOpacity
+        style={calendarStyles.shareButton}
+        onPress={handleShare}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="share-outline" size={24} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };

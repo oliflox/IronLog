@@ -8,6 +8,7 @@ export interface Exercise {
   order: number;
   imageUrl?: string;
   description?: string;
+  muscleGroup?: string;
 }
 
 export const exerciseRepository = {
@@ -17,15 +18,15 @@ export const exerciseRepository = {
 
       if (result.length === 0) {
         const exercises = [
-          { id: randomUUID(), name: 'Développé couché', sessionId, order: 0, description: 'Exercice de pectoraux' },
-          { id: randomUUID(), name: 'Squat', sessionId, order: 1, description: 'Exercice de jambes' },
-          { id: randomUUID(), name: 'Traction', sessionId, order: 2, description: 'Exercice de dos' }
+          { id: randomUUID(), name: 'Développé couché', sessionId, order: 0, description: 'Exercice de pectoraux', muscleGroup: 'Pectoraux' },
+          { id: randomUUID(), name: 'Squat', sessionId, order: 1, description: 'Exercice de jambes', muscleGroup: 'Jambes' },
+          { id: randomUUID(), name: 'Traction', sessionId, order: 2, description: 'Exercice de dos', muscleGroup: 'Dos' }
         ];
 
         for (const exercise of exercises) {
           await db.runAsync(
-            'INSERT INTO exercises (id, name, sessionId, "order", description) VALUES (?, ?, ?, ?, ?)',
-            [exercise.id, exercise.name, exercise.sessionId, exercise.order, exercise.description]
+            'INSERT INTO exercises (id, name, sessionId, "order", description, muscleGroup) VALUES (?, ?, ?, ?, ?, ?)',
+            [exercise.id, exercise.name, exercise.sessionId, exercise.order, exercise.description, exercise.muscleGroup]
           );
         }
       }
@@ -44,7 +45,7 @@ export const exerciseRepository = {
     }
   },
 
-  async createExercise(name: string, sessionId: string, description?: string, imageUrl?: string): Promise<Exercise> {
+  async createExercise(name: string, sessionId: string, description?: string, imageUrl?: string, muscleGroup?: string): Promise<Exercise> {
     try {
       const id = randomUUID();
       const result = await db.getAllAsync<{maxOrder: number}>('SELECT COALESCE(MAX("order"), -1) as maxOrder FROM exercises WHERE sessionId = ?', [sessionId]);
@@ -52,19 +53,48 @@ export const exerciseRepository = {
       const newOrder = maxOrder + 1;
       
       await db.runAsync(
-        'INSERT INTO exercises (id, name, sessionId, "order", description, imageUrl) VALUES (?, ?, ?, ?, ?, ?)',
-        [id, name, sessionId, newOrder, description || null, imageUrl || null]
+        'INSERT INTO exercises (id, name, sessionId, "order", description, imageUrl, muscleGroup) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [id, name, sessionId, newOrder, description || null, imageUrl || null, muscleGroup || null]
       );
-      return { id, name, sessionId, order: newOrder, description, imageUrl };
+      return { id, name, sessionId, order: newOrder, description, imageUrl, muscleGroup };
     } catch (error) {
       console.error('Erreur lors de la création de l\'exercice:', error);
       throw error;
     }
   },
 
-  async updateExercise(id: string, name: string, description?: string, imageUrl?: string): Promise<void> {
+  async createExerciseFromTemplate(templateId: string, sessionId: string): Promise<Exercise> {
     try {
-      await db.runAsync('UPDATE exercises SET name = ?, description = ?, imageUrl = ? WHERE id = ?', [name, description || null, imageUrl || null, id]);
+      // Récupérer le template
+      const templates = await db.getAllAsync<{id: string, name: string, description: string, imageUrl: string, muscleGroup: string}>(
+        'SELECT id, name, description, imageUrl, muscleGroup FROM exercise_templates WHERE id = ?',
+        [templateId]
+      );
+      
+      if (templates.length === 0) {
+        throw new Error('Template d\'exercice non trouvé');
+      }
+      
+      const template = templates[0];
+      
+      // Créer l'exercice à partir du template
+      return await this.createExercise(
+        template.name,
+        sessionId,
+        template.description,
+        template.imageUrl,
+        template.muscleGroup
+      );
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'exercice à partir du template:', error);
+      throw error;
+    }
+  },
+
+  async updateExercise(id: string, name: string, description?: string, imageUrl?: string, muscleGroup?: string): Promise<void> {
+    try {
+      await db.runAsync('UPDATE exercises SET name = ?, description = ?, imageUrl = ?, muscleGroup = ? WHERE id = ?', 
+        [name, description || null, imageUrl || null, muscleGroup || null, id]);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'exercice:', error);
       throw error;

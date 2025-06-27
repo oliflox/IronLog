@@ -1,4 +1,5 @@
 import { openDatabaseSync } from 'expo-sqlite';
+import { exerciseTemplateRepository } from './exerciseTemplateRepository';
 
 export const db = openDatabaseSync('mydb.db');
 
@@ -72,11 +73,22 @@ export const initDatabase = async () => {
         "order" INTEGER DEFAULT 0,
         imageUrl TEXT,
         description TEXT,
+        muscleGroup TEXT,
         FOREIGN KEY (sessionId) REFERENCES sessions (id) ON DELETE CASCADE
       );
     `));
 
     console.log('Table exercises créée avec succès');
+
+    // Vérifier si la colonne muscleGroup existe, sinon l'ajouter
+    try {
+      await executeWithRetry(() => db.execAsync('SELECT muscleGroup FROM exercises LIMIT 1'));
+      console.log('Colonne muscleGroup existe déjà');
+    } catch (error) {
+      console.log('Ajout de la colonne muscleGroup à la table exercises...');
+      await executeWithRetry(() => db.execAsync('ALTER TABLE exercises ADD COLUMN muscleGroup TEXT'));
+      console.log('Migration muscleGroup terminée avec succès');
+    }
 
     // Créer la table timers
     await executeWithRetry(() => db.execAsync('DROP TABLE IF EXISTS timers'));
@@ -145,6 +157,24 @@ export const initDatabase = async () => {
     `));
 
     console.log('Table measurements créée avec succès');
+
+    // Créer la table exercise_templates pour les exercices prédéfinis
+    await executeWithRetry(() => db.execAsync(`
+      CREATE TABLE IF NOT EXISTS exercise_templates (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        muscleGroup TEXT NOT NULL,
+        imageUrl TEXT,
+        description TEXT,
+        isDefault INTEGER DEFAULT 0
+      );
+    `));
+
+    console.log('Table exercise_templates créée avec succès');
+
+    // Initialiser les templates d'exercices par défaut
+    await exerciseTemplateRepository.initializeDefaultTemplates();
+
     console.log('Initialisation de la base de données terminée avec succès');
   } catch (error) {
     console.error('Erreur lors de l\'initialisation de la base de données:', error);

@@ -1,0 +1,190 @@
+{
+  "exercises": [
+    {
+      "name": "Développé couché",
+      "muscleGroup": "Pectoraux",
+      "description": "Exercice de base pour les pectoraux",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Développé incliné",
+      "muscleGroup": "Pectoraux",
+      "description": "Exercice pour le haut des pectoraux",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Développé décliné",
+      "muscleGroup": "Pectoraux",
+      "description": "Exercice pour le bas des pectoraux",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Écarté couché",
+      "muscleGroup": "Pectoraux",
+      "description": "Exercice d'isolation des pectoraux",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Pompes",
+      "muscleGroup": "Pectoraux",
+      "description": "Exercice au poids du corps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Tractions",
+      "muscleGroup": "Dos",
+      "description": "Exercice de base pour le dos",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Rowing barre",
+      "muscleGroup": "Dos",
+      "description": "Exercice de tirage horizontal",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Rowing haltères",
+      "muscleGroup": "Dos",
+      "description": "Exercice de tirage avec haltères",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Tirage vertical",
+      "muscleGroup": "Dos",
+      "description": "Exercice de tirage vertical",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Soulevé de terre",
+      "muscleGroup": "Dos",
+      "description": "Exercice complet pour le dos",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Développé militaire",
+      "muscleGroup": "Épaules",
+      "description": "Exercice de base pour les épaules",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Élévations latérales",
+      "muscleGroup": "Épaules",
+      "description": "Exercice d'isolation des épaules",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Élévations frontales",
+      "muscleGroup": "Épaules",
+      "description": "Exercice pour les deltoïdes antérieurs",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Oiseau",
+      "muscleGroup": "Épaules",
+      "description": "Exercice pour les deltoïdes postérieurs",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Curl haltères",
+      "muscleGroup": "Biceps",
+      "description": "Exercice de base pour les biceps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Curl barre",
+      "muscleGroup": "Biceps",
+      "description": "Exercice avec barre droite",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Curl marteau",
+      "muscleGroup": "Biceps",
+      "description": "Exercice avec haltères en marteau",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Curl pupitre",
+      "muscleGroup": "Biceps",
+      "description": "Exercice d'isolation des biceps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Extensions triceps",
+      "muscleGroup": "Triceps",
+      "description": "Exercice de base pour les triceps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Dips",
+      "muscleGroup": "Triceps",
+      "description": "Exercice au poids du corps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Kickback",
+      "muscleGroup": "Triceps",
+      "description": "Exercice d'isolation des triceps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Squat",
+      "muscleGroup": "Jambes",
+      "description": "Exercice de base pour les jambes",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Presse à cuisses",
+      "muscleGroup": "Jambes",
+      "description": "Exercice sur machine",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Fentes",
+      "muscleGroup": "Jambes",
+      "description": "Exercice unilatéral",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Extensions de jambes",
+      "muscleGroup": "Jambes",
+      "description": "Exercice pour les quadriceps",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Flexions de jambes",
+      "muscleGroup": "Jambes",
+      "description": "Exercice pour les ischio-jambiers",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Extensions mollets",
+      "muscleGroup": "Jambes",
+      "description": "Exercice pour les mollets",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Crunch",
+      "muscleGroup": "Abdominaux",
+      "description": "Exercice de base pour les abdos",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Planche",
+      "muscleGroup": "Abdominaux",
+      "description": "Exercice de gainage",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Relevé de jambes",
+      "muscleGroup": "Abdominaux",
+      "description": "Exercice pour le bas des abdos",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Russian twist",
+      "muscleGroup": "Abdominaux",
+      "description": "Exercice pour les obliques",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    }
+  ]
+} 

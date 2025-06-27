@@ -17,6 +17,7 @@ type ActionType = 'workout' | 'session' | 'exercise' | 'timer' | 'calendar' | 'p
 interface GlobalAddButtonProps {
   actionType: ActionType;
   onRefresh?: () => void;
+  onPress?: () => void;
   sessionWorkoutId?: string; // Pour les sessions, on a besoin de l'ID du workout parent
   exerciseSessionId?: string; // Pour les exercices, on a besoin de l'ID de la session parent
   style?: any;
@@ -25,6 +26,7 @@ interface GlobalAddButtonProps {
 const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({ 
   actionType,
   onRefresh,
+  onPress,
   sessionWorkoutId,
   exerciseSessionId,
   style
@@ -84,6 +86,11 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
   const { icon, message } = getButtonConfig(actionType);
 
   const handlePress = () => {
+    if (onPress) {
+      onPress();
+      return;
+    }
+
     if (actionType === 'workout') {
       setIsAddWorkoutVisible(true);
     } else if (actionType === 'session') {

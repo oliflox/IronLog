@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Exercise, exerciseRepository } from '../storage/exerciseRepository';
+import { ExerciseTemplate } from '../storage/exerciseTemplateRepository';
 
 export const useExerciseManager = (sessionId: string) => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -29,20 +30,31 @@ export const useExerciseManager = (sessionId: string) => {
   };
 
   // Créer un exercice
-  const createExercise = async (name: string, description?: string, imageUrl?: string) => {
+  const createExercise = async (name: string, description?: string, imageUrl?: string, muscleGroup?: string) => {
     if (!sessionId) return;
     try {
-      await exerciseRepository.createExercise(name, sessionId, description, imageUrl);
+      await exerciseRepository.createExercise(name, sessionId, description, imageUrl, muscleGroup);
       await loadExercises();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erreur lors de la création de l\'exercice');
     }
   };
 
+  // Créer un exercice à partir d'un template
+  const createExerciseFromTemplate = async (template: ExerciseTemplate) => {
+    if (!sessionId) return;
+    try {
+      await exerciseRepository.createExerciseFromTemplate(template.id, sessionId);
+      await loadExercises();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Erreur lors de la création de l\'exercice à partir du template');
+    }
+  };
+
   // Mettre à jour un exercice
   const updateExercise = async (exercise: Exercise) => {
     try {
-      await exerciseRepository.updateExercise(exercise.id, exercise.name, exercise.description, exercise.imageUrl);
+      await exerciseRepository.updateExercise(exercise.id, exercise.name, exercise.description, exercise.imageUrl, exercise.muscleGroup);
       await loadExercises();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erreur lors de la mise à jour de l\'exercice');
@@ -106,6 +118,7 @@ export const useExerciseManager = (sessionId: string) => {
     loadExercises,
     initializeExercises,
     createExercise,
+    createExerciseFromTemplate,
     updateExercise,
     deleteExercise,
     reorderExercises,

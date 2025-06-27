@@ -6,19 +6,24 @@ import React from "react";
 import { Pressable } from "react-native";
 import { useEditMode } from "../contexts/EditModeContext";
 import CalendarScreen from "../screens/CalendarScreen";
+import ExerciseLibraryScreen from "../screens/ExerciseLibraryScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import TimerScreen from "../screens/TimerScreen";
 import WorkoutExercisesScreen from "../screens/WorkoutExercisesScreen";
 import WorkoutLogScreen from "../screens/WorkoutLogScreen";
 import WorkoutScreen from "../screens/WorkoutScreen";
 import WorkoutSessionsScreen from "../screens/WorkoutSessionsScreen";
+import { ExerciseTemplate } from "../storage/exerciseTemplateRepository";
 import { navigationOptions, navigationStyles } from "../styles/navigation";
 import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
   Workout: { refresh?: boolean };
   WorkoutSessions: { programId: string };
-  WorkoutExercises: { sessionId: string };
+  WorkoutExercises: { 
+    sessionId: string;
+    selectedExercise?: ExerciseTemplate;
+  };
   WorkoutLog: {
     exercise: {
       id: string;
@@ -26,6 +31,7 @@ export type RootStackParamList = {
       imageUrl?: string;
     };
   };
+  ExerciseLibrary: { sessionId: string };
 };
 
 export type RootTabParamList = {
@@ -93,6 +99,14 @@ const WorkoutStack = () => {
         options={{
           headerShown: true,
           headerTitle: "Exercices",
+        }}
+      />
+      <Stack.Screen
+        name="ExerciseLibrary"
+        component={ExerciseLibraryScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Bibliothèque d'exercices",
         }}
       />
       <Stack.Screen

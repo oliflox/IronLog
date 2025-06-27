@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, SectionList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useExerciseManager } from "../hooks/useExerciseManager";
 import { useExerciseTemplates } from "../hooks/useExerciseTemplates";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { ExerciseTemplate } from "../storage/exerciseTemplateRepository";
@@ -18,6 +19,7 @@ interface Section {
 const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
   const { sessionId } = route.params;
   const { templates, muscleGroups, loading, error, getTemplatesByMuscleGroup, createTemplate, loadTemplates } = useExerciseTemplates();
+  const { createExerciseFromTemplate } = useExerciseManager(sessionId);
   const [sectionsData, setSectionsData] = useState<Section[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSections, setFilteredSections] = useState<Section[]>([]);
@@ -74,12 +76,15 @@ const ExerciseLibraryScreen = ({ route, navigation }: Props) => {
     }
   }, [searchQuery, sectionsData]);
 
-  const handleExercisePress = (exercise: ExerciseTemplate) => {
-    // Naviguer vers WorkoutExercises avec l'exercice sélectionné
-    navigation.navigate("WorkoutExercises", { 
-      sessionId,
-      selectedExercise: exercise 
-    });
+  const handleExercisePress = async (exercise: ExerciseTemplate) => {
+    try {
+      // Ajouter directement l'exercice à la session
+      await createExerciseFromTemplate(exercise);
+      // Revenir à l'écran précédent
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Erreur", "Impossible d'ajouter l'exercice à la session");
+    }
   };
 
   const clearSearch = () => {
@@ -413,8 +418,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.mainBg,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
   },
   searchInputContainer: {
     flexDirection: "row",
@@ -444,7 +447,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.itemBg,
   },
   sectionTitle: {
     fontSize: theme.typography.fontSize.lg,
@@ -458,7 +461,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.mainBg,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.itemBg,
   },
   exerciseThumbnail: {
     width: 50,
@@ -603,7 +606,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.md,
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.itemBg,
     borderStyle: 'dashed',
   },
   imagePickerPlaceholder: {
@@ -614,7 +617,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.itemBg,
     borderStyle: 'dashed',
   },
   imagePickerText: {
@@ -661,7 +664,7 @@ const styles = StyleSheet.create({
   pickerOption: {
     padding: theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: theme.colors.itemBg,
   },
   pickerOptionText: {
     fontSize: theme.typography.fontSize.md,

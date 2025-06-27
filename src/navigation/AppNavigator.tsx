@@ -13,16 +13,15 @@ import WorkoutExercisesScreen from "../screens/WorkoutExercisesScreen";
 import WorkoutLogScreen from "../screens/WorkoutLogScreen";
 import WorkoutScreen from "../screens/WorkoutScreen";
 import WorkoutSessionsScreen from "../screens/WorkoutSessionsScreen";
-import { ExerciseTemplate } from "../storage/exerciseTemplateRepository";
 import { navigationOptions, navigationStyles } from "../styles/navigation";
 import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
+  MainTabs: undefined;
   Workout: { refresh?: boolean };
   WorkoutSessions: { programId: string };
   WorkoutExercises: { 
     sessionId: string;
-    selectedExercise?: ExerciseTemplate;
   };
   WorkoutLog: {
     exercise: {
@@ -102,14 +101,6 @@ const WorkoutStack = () => {
         }}
       />
       <Stack.Screen
-        name="ExerciseLibrary"
-        component={ExerciseLibraryScreen}
-        options={{
-          headerShown: true,
-          headerTitle: "Bibliothèque d'exercices",
-        }}
-      />
-      <Stack.Screen
         name="WorkoutLog"
         component={WorkoutLogScreen}
         options={{
@@ -121,7 +112,31 @@ const WorkoutStack = () => {
   );
 };
 
-const AppNavigator = () => {
+const MainStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={navigationOptions}
+    >
+      <Stack.Screen
+        name="MainTabs"
+        component={MainTabs}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ExerciseLibrary"
+        component={ExerciseLibraryScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Bibliothèque d'exercices",
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const MainTabs = () => {
   const { editMode, toggleEditMode } = useEditMode();
   return (
     <Tab.Navigator
@@ -202,6 +217,10 @@ const AppNavigator = () => {
       />
     </Tab.Navigator>
   );
+};
+
+const AppNavigator = () => {
+  return <MainStack />;
 };
 
 export default AppNavigator;

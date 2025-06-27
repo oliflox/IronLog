@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Text, View } from "react-native";
 import EditExercisePopup from "../components/EditExercisePopup";
 import ExerciseList from "../components/ExerciseList";
@@ -8,24 +9,23 @@ import { useEditMode } from "../contexts/EditModeContext";
 import { useExerciseManager } from "../hooks/useExerciseManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Exercise } from "../storage/exerciseRepository";
-import { ExerciseTemplate } from "../storage/exerciseTemplateRepository";
 
 type Props = NativeStackScreenProps<RootStackParamList, "WorkoutExercises">;
 
 const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
-  const { sessionId, selectedExercise } = route.params;
-  const { exercises, error, loadExercises, deleteExercise, reorderExercises, updateExercise, createExerciseFromTemplate } = useExerciseManager(sessionId);
+  const { sessionId } = route.params;
+  const { exercises, error, loadExercises, deleteExercise, reorderExercises, updateExercise } = useExerciseManager(sessionId);
   const { editMode } = useEditMode();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedExerciseForEdit, setSelectedExerciseForEdit] = useState<Exercise | null>(null);
   
-  // Gérer l'exercice sélectionné depuis la bibliothèque
-  useEffect(() => {
-    if (selectedExercise) {
-      handleAddExerciseFromLibrary(selectedExercise);
-    }
-  }, [selectedExercise]);
-
+  // Recharger les exercices quand l'écran revient au focus
+  useFocusEffect(
+    useCallback(() => {
+      loadExercises();
+    }, [loadExercises])
+  );
+  
   const handleItemPress = (item: Exercise) => {
     // Navigation vers la page de log de l'exercice
     navigation.navigate("WorkoutLog", { 
@@ -59,12 +59,6 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
     updateExercise(updatedExercise);
   };
 
-  const handleAddExerciseFromLibrary = async (template: ExerciseTemplate) => {
-    await createExerciseFromTemplate(template);
-    // Nettoyer la route pour éviter de re-ajouter l'exercice
-    navigation.setParams({ sessionId, selectedExercise: undefined });
-  };
-
   const handleAddButtonPress = () => {
     // Naviguer vers la bibliothèque d'exercices
     navigation.navigate("ExerciseLibrary", { sessionId });
@@ -88,6 +82,7 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
         onReorderItems={handleReorderExercises}
         editMode={editMode}
         onUpdateItem={handleUpdateExercise}
+        showEditButton={false}
       />
       <GlobalAddButton 
         actionType="exercise"

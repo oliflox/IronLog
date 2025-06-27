@@ -2,8 +2,8 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
-    RenderItemParams,
-    ScaleDecorator
+  RenderItemParams,
+  ScaleDecorator
 } from "react-native-draggable-flatlist";
 import { Exercise } from "../storage/exerciseRepository";
 import { theme } from "../styles/theme";
@@ -18,6 +18,7 @@ interface ExerciseListProps {
   onReorderItems?: (data: Exercise[]) => void;
   onUpdateItem?: (item: Exercise) => void;
   editMode?: boolean;
+  showEditButton?: boolean;
 }
 
 const ExerciseList: React.FC<ExerciseListProps> = ({ 
@@ -28,6 +29,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
   onReorderItems,
   onUpdateItem,
   editMode = false,
+  showEditButton = true,
 }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Exercise>) => {
     const firstLetter = item.name.charAt(0).toUpperCase();
@@ -77,15 +79,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                 workoutStyles.workoutName,
                 editMode && { color: theme.colors.textSecondary }
               ]}>{item.name}</Text>
-              {item.muscleGroup && (
-                <Text style={{
-                  fontSize: 12,
-                  color: theme.colors.textSecondary,
-                  marginTop: 2
-                }}>
-                  {item.muscleGroup}
-                </Text>
-              )}
             </View>
             {editMode && (
               <View style={{ marginLeft: 8, opacity: 0.6 }}>
@@ -96,7 +89,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
           {onDeleteItem && editMode && (
             <DeleteButton onDelete={() => onDeleteItem(item.id)} />
           )}
-          {onUpdateItem && editMode && (
+          {onUpdateItem && editMode && showEditButton && (
             <Pressable
               style={{ padding: 8, marginLeft: 4 }}
               onPress={() => onUpdateItem(item)}

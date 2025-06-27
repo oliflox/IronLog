@@ -35,7 +35,8 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
       exercise: {
         id: item.id,
         name: item.name,
-        imageUrl: item.imageUrl
+        imageUrl: item.imageUrl,
+        type: item.type
       }
     });
   };

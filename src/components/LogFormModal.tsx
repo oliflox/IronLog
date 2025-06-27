@@ -10,12 +10,14 @@ import {
     View
 } from 'react-native';
 import { ExerciseLog } from '../storage/exerciseLogRepository';
+import { ExerciseType } from '../storage/exerciseRepository';
 
 interface LogFormModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (date: string, sets: { repetitions: number; weight: number; order: number }[]) => Promise<void>;
+  onSubmit: (date: string, sets: { repetitions?: number; weight?: number; duration?: number; order: number }[]) => Promise<void>;
   log?: ExerciseLog | null;
+  exerciseType?: ExerciseType;
 }
 
 const LogFormModal: React.FC<LogFormModalProps> = ({
@@ -23,10 +25,11 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
   onClose,
   onSubmit,
   log,
+  exerciseType = 'weight_reps',
 }) => {
   const [date, setDate] = useState('');
-  const [sets, setSets] = useState<{ repetitions: number; weight: number; order: number }[]>([
-    { repetitions: 0, weight: 0, order: 0 }
+  const [sets, setSets] = useState<{ repetitions?: number; weight?: number; duration?: number; order: number }[]>([
+    { order: 0 }
   ]);
 
   useEffect(() => {
@@ -35,16 +38,17 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
       setSets(log.sets.map(set => ({
         repetitions: set.repetitions,
         weight: set.weight,
+        duration: set.duration,
         order: set.order
       })));
     } else {
       setDate(new Date().toISOString().split('T')[0]);
-      setSets([{ repetitions: 0, weight: 0, order: 0 }]);
+      setSets([{ order: 0 }]);
     }
   }, [log, visible]);
 
   const addSet = () => {
-    setSets([...sets, { repetitions: 0, weight: 0, order: sets.length }]);
+    setSets([...sets, { order: sets.length }]);
   };
 
   const removeSet = (index: number) => {
@@ -54,12 +58,27 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
     }
   };
 
-  const updateSet = (index: number, field: 'repetitions' | 'weight', value: string) => {
+  const updateSet = (index: number, field: 'repetitions' | 'weight' | 'duration', value: string) => {
     const newSets = [...sets];
-    newSets[index] = {
-      ...newSets[index],
-      [field]: parseInt(value) || 0
-    };
+    if (field === 'duration') {
+      // Pour la durée, on attend un format "mm:ss" ou juste des secondes
+      const parts = value.split(':');
+      let totalSeconds = 0;
+      if (parts.length === 2) {
+        totalSeconds = (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0);
+      } else {
+        totalSeconds = parseInt(value) || 0;
+      }
+      newSets[index] = {
+        ...newSets[index],
+        [field]: totalSeconds
+      };
+    } else {
+      newSets[index] = {
+        ...newSets[index],
+        [field]: parseInt(value) || 0
+      };
+    }
     setSets(newSets);
   };
 
@@ -69,9 +88,16 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
       return;
     }
 
-    if (sets.some(set => set.repetitions <= 0 || set.weight <= 0)) {
-      Alert.alert('Erreur', 'Veuillez saisir des valeurs valides pour tous les sets');
-      return;
+    if (exerciseType === 'weight_reps') {
+      if (sets.some(set => !set.repetitions || set.repetitions <= 0 || !set.weight || set.weight <= 0)) {
+        Alert.alert('Erreur', 'Veuillez saisir des valeurs valides pour tous les sets');
+        return;
+      }
+    } else {
+      if (sets.some(set => !set.duration || set.duration <= 0)) {
+        Alert.alert('Erreur', 'Veuillez saisir des durées valides pour tous les sets');
+        return;
+      }
     }
 
     try {
@@ -80,6 +106,18 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
     } catch (error) {
       Alert.alert('Erreur', 'Impossible de sauvegarder le log');
     }
+  };
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const formatDurationInput = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -113,7 +151,7 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
           <View style={styles.setsContainer}>
             <View style={styles.setsHeader}>
               <Text style={styles.label}>Sets</Text>
-              <Pressable onPress={addSet} style={styles.addButton}>
+              <Pressable style={styles.addButton} onPress={addSet}>
                 <Text style={styles.addButtonText}>+ Ajouter</Text>
               </Pressable>
             </View>
@@ -122,30 +160,45 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
               <View key={index} style={styles.setRow}>
                 <Text style={styles.setNumber}>Set {index + 1}</Text>
                 <View style={styles.setInputs}>
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.smallLabel}>Reps</Text>
-                    <TextInput
-                      style={styles.smallInput}
-                      value={set.repetitions.toString()}
-                      onChangeText={(value) => updateSet(index, 'repetitions', value)}
-                      keyboardType="numeric"
-                      placeholder="0"
-                    />
-                  </View>
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.smallLabel}>Poids (kg)</Text>
-                    <TextInput
-                      style={styles.smallInput}
-                      value={set.weight.toString()}
-                      onChangeText={(value) => updateSet(index, 'weight', value)}
-                      keyboardType="numeric"
-                      placeholder="0"
-                    />
-                  </View>
+                  {exerciseType === 'weight_reps' ? (
+                    <>
+                      <View style={styles.inputField}>
+                        <Text style={styles.smallLabel}>Répétitions</Text>
+                        <TextInput
+                          style={styles.smallInput}
+                          value={set.repetitions?.toString() || ''}
+                          onChangeText={(value) => updateSet(index, 'repetitions', value)}
+                          keyboardType="numeric"
+                          placeholder="0"
+                        />
+                      </View>
+                      <View style={styles.inputField}>
+                        <Text style={styles.smallLabel}>Poids (kg)</Text>
+                        <TextInput
+                          style={styles.smallInput}
+                          value={set.weight?.toString() || ''}
+                          onChangeText={(value) => updateSet(index, 'weight', value)}
+                          keyboardType="numeric"
+                          placeholder="0"
+                        />
+                      </View>
+                    </>
+                  ) : (
+                    <View style={styles.inputField}>
+                      <Text style={styles.smallLabel}>Durée (mm:ss)</Text>
+                      <TextInput
+                        style={styles.smallInput}
+                        value={set.duration ? formatDurationInput(set.duration) : ''}
+                        onChangeText={(value) => updateSet(index, 'duration', value)}
+                        keyboardType="default"
+                        placeholder="0:00"
+                      />
+                    </View>
+                  )}
                   {sets.length > 1 && (
                     <Pressable
-                      onPress={() => removeSet(index)}
                       style={styles.removeButton}
+                      onPress={() => removeSet(index)}
                     >
                       <Text style={styles.removeButtonText}>✕</Text>
                     </Pressable>
@@ -157,13 +210,13 @@ const LogFormModal: React.FC<LogFormModalProps> = ({
         </ScrollView>
 
         <View style={styles.footer}>
-          <Pressable
-            onPress={handleSubmit}
-            style={[styles.submitButton]}
-          >
-              <Text style={styles.submitButtonText}>
-                {log ? 'Modifier' : 'Ajouter'}
-              </Text>
+          <Pressable style={styles.cancelButton} onPress={onClose}>
+            <Text style={styles.cancelButtonText}>Annuler</Text>
+          </Pressable>
+          <Pressable style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>
+              {log ? 'Modifier' : 'Ajouter'}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -233,6 +286,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     minWidth: 60,
   },
+  durationPreview: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+    fontStyle: 'italic',
+  },
   setsContainer: {
     marginTop: 10,
   },
@@ -272,8 +331,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 15,
   },
+  inputField: {
+    flex: 1,
+  },
   removeButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#ff4444',
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -286,19 +348,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footer: {
+    flexDirection: 'row',
     padding: 20,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
   },
-  submitButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 15,
+  cancelButton: {
+    flex: 1,
+    padding: 15,
+    marginRight: 10,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
     alignItems: 'center',
   },
-  submitButtonDisabled: {
-    backgroundColor: '#ccc',
+  cancelButtonText: {
+    color: '#666',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  submitButton: {
+    flex: 1,
+    padding: 15,
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    alignItems: 'center',
   },
   submitButtonText: {
     color: '#fff',

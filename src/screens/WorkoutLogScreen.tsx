@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import AddLogPopup from '../components/AddLogPopup';
 import EditDatePopup from '../components/EditDatePopup';
@@ -10,7 +10,9 @@ import LogFormModal from '../components/LogFormModal';
 import { useEditMode } from '../contexts/EditModeContext';
 import { useExerciseLogs } from '../hooks/useExerciseLogs';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { db } from '../storage/database';
 import { ExerciseLog } from '../storage/exerciseLogRepository';
+import { ExerciseType } from '../storage/exerciseRepository';
 
 interface WorkoutLogScreenProps {
   route: RouteProp<RootStackParamList, 'WorkoutLog'>;
@@ -19,15 +21,17 @@ interface WorkoutLogScreenProps {
 
 interface SectionItem {
   id: string;
-  repetitions: number;
-  weight: number;
+  repetitions?: number;
+  weight?: number;
+  duration?: number;
   setNumber: number;
 }
 
 interface Section {
   title: string;
-  totalReps: number;
-  totalWeight: number;
+  totalReps?: number;
+  totalWeight?: number;
+  totalDuration?: number;
   data: SectionItem[];
   log: ExerciseLog;
 }
@@ -44,6 +48,7 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
   const [showEditDatePopup, setShowEditDatePopup] = useState(false);
   const [selectedSet, setSelectedSet] = useState<SectionItem | null>(null);
   const [selectedSection, setSelectedSection] = useState<Section | null>(null);
+  const [exerciseType, setExerciseType] = useState<ExerciseType>('weight_reps');
 
   const {
     logs,
@@ -59,7 +64,26 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     refreshLogs
   } = useExerciseLogs(exercise.id);
 
-  const handleAddSet = async (date: string, sets: { repetitions: number; weight: number; order: number }[]) => {
+  // Récupérer le type d'exercice depuis la base de données
+  useEffect(() => {
+    const getExerciseType = async () => {
+      try {
+        const result = await db.getFirstAsync<{ type: string }>(
+          'SELECT type FROM exercises WHERE id = ?',
+          [exercise.id]
+        );
+        if (result?.type && (result.type === 'weight_reps' || result.type === 'time')) {
+          setExerciseType(result.type as ExerciseType);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération du type d\'exercice:', error);
+      }
+    };
+    
+    getExerciseType();
+  }, [exercise.id]);
+
+  const handleAddSet = async (date: string, sets: { repetitions?: number; weight?: number; duration?: number; order: number }[]) => {
     try {
       await addSet(date, sets[0]);
     } catch (error) {
@@ -67,7 +91,7 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     }
   };
 
-  const handleEditLog = async (date: string, sets: { repetitions: number; weight: number; order: number }[]) => {
+  const handleEditLog = async (date: string, sets: { repetitions?: number; weight?: number; duration?: number; order: number }[]) => {
     if (!editingLog) return;
     
     try {
@@ -109,11 +133,11 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     setShowEditSetPopup(true);
   };
 
-  const handleSetSave = async (repetitions: number, weight: number) => {
+  const handleSetSave = async (repetitions?: number, weight?: number, duration?: number) => {
     if (!selectedSet) return;
     
     try {
-      await updateSet(selectedSet.id, repetitions, weight);
+      await updateSet(selectedSet.id, repetitions, weight, duration);
       setSelectedSet(null);
     } catch (error) {
       console.error('Erreur lors de la modification du set:', error);
@@ -157,14 +181,6 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     }
   };
 
-  const handleInitializeDefaultLogs = async () => {
-    try {
-      await initializeDefaultLogs();
-    } catch (error) {
-      console.error('Erreur lors de l\'initialisation des logs par défaut:', error);
-    }
-  };
-
   // Récupérer le dernier set pour pré-remplir le formulaire
   const getLastSet = () => {
     if (logs.length === 0) return null;
@@ -176,14 +192,25 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
     const lastSet = latestLog.sets[latestLog.sets.length - 1];
     return {
       repetitions: lastSet.repetitions,
-      weight: lastSet.weight
+      weight: lastSet.weight,
+      duration: lastSet.duration
     };
   };
 
   const sections: Section[] = logs
     .map((historyItem) => {
-      const totalReps = historyItem.sets.reduce((acc, set) => acc + set.repetitions, 0);
-      const totalWeight = historyItem.sets.reduce((acc, set) => acc + set.weight, 0);
+      const isTimeBased = exerciseType === 'time';
+      
+      let totalReps: number | undefined;
+      let totalWeight: number | undefined;
+      let totalDuration: number | undefined;
+
+      if (isTimeBased) {
+        totalDuration = historyItem.sets.reduce((acc, set) => acc + (set.duration || 0), 0);
+      } else {
+        totalReps = historyItem.sets.reduce((acc, set) => acc + (set.repetitions || 0), 0);
+        totalWeight = historyItem.sets.reduce((acc, set) => acc + (set.weight || 0), 0);
+      }
 
       const date = new Date(historyItem.date);
       const day = date.getDate();
@@ -194,16 +221,17 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         title: `${day} ${month} ${year}`,
         totalReps,
         totalWeight,
+        totalDuration,
         data: historyItem.sets.map((set, index) => ({
           id: set.id,
           repetitions: set.repetitions,
           weight: set.weight,
-          setNumber: index + 1,
+          duration: set.duration,
+          setNumber: index + 1
         })),
-        log: historyItem,
+        log: historyItem
       };
-    })
-    .filter(section => section.data.length > 0); // Filtrer les sections sans sets
+    });
 
   if (error) {
     return (
@@ -228,14 +256,12 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         onSetEdit={handleSetEdit}
         onSetDelete={handleSetDelete}
         onDateEdit={handleDateEdit}
+        exerciseType={exerciseType}
       />
 
       {logs.length === 0 && (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Aucun log trouvé</Text>
-          <Pressable onPress={handleInitializeDefaultLogs} style={styles.initButton}>
-            <Text style={styles.initButtonText}>Initialiser avec des données d'exemple</Text>
-          </Pressable>
         </View>
       )}
 
@@ -251,6 +277,7 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         onClose={() => setShowAddPopup(false)}
         onAdd={handleAddSet}
         lastSet={getLastSet()}
+        exerciseType={exerciseType}
       />
 
       <EditSetPopup
@@ -261,6 +288,7 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         }}
         onSave={handleSetSave}
         set={selectedSet}
+        exerciseType={exerciseType}
       />
 
       <EditDatePopup
@@ -281,6 +309,7 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         }}
         onSubmit={handleEditLog}
         log={editingLog}
+        exerciseType={exerciseType}
       />
     </View>
   );
@@ -325,17 +354,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 20,
-  },
-  initButton: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  initButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
   },
   fab: {
     position: 'absolute',

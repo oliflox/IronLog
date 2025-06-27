@@ -1,6 +1,9 @@
 import { randomUUID } from "expo-crypto";
 import { db } from "./database";
 
+export type ExerciseType = 'weight_reps' | 'time';
+export type ExerciseCategory = 'Musculation' | 'Cardio' | 'Autres';
+
 export interface Exercise {
   id: string;
   name: string;
@@ -9,6 +12,8 @@ export interface Exercise {
   imageUrl?: string;
   description?: string;
   muscleGroup?: string;
+  type: ExerciseType;
+  category: ExerciseCategory;
 }
 
 export const exerciseRepository = {
@@ -18,15 +23,15 @@ export const exerciseRepository = {
 
       if (result.length === 0) {
         const exercises = [
-          { id: randomUUID(), name: 'Développé couché', sessionId, order: 0, description: 'Exercice de pectoraux', muscleGroup: 'Pectoraux' },
-          { id: randomUUID(), name: 'Squat', sessionId, order: 1, description: 'Exercice de jambes', muscleGroup: 'Jambes' },
-          { id: randomUUID(), name: 'Traction', sessionId, order: 2, description: 'Exercice de dos', muscleGroup: 'Dos' }
+          { id: randomUUID(), name: 'Développé couché', sessionId, order: 0, description: 'Exercice de pectoraux', muscleGroup: 'Pectoraux', type: 'weight_reps' as ExerciseType, category: 'Musculation' as ExerciseCategory },
+          { id: randomUUID(), name: 'Squat', sessionId, order: 1, description: 'Exercice de jambes', muscleGroup: 'Jambes', type: 'weight_reps' as ExerciseType, category: 'Musculation' as ExerciseCategory },
+          { id: randomUUID(), name: 'Traction', sessionId, order: 2, description: 'Exercice de dos', muscleGroup: 'Dos', type: 'weight_reps' as ExerciseType, category: 'Musculation' as ExerciseCategory }
         ];
 
         for (const exercise of exercises) {
           await db.runAsync(
-            'INSERT INTO exercises (id, name, sessionId, "order", description, muscleGroup) VALUES (?, ?, ?, ?, ?, ?)',
-            [exercise.id, exercise.name, exercise.sessionId, exercise.order, exercise.description, exercise.muscleGroup]
+            'INSERT INTO exercises (id, name, sessionId, "order", description, muscleGroup, type, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [exercise.id, exercise.name, exercise.sessionId, exercise.order, exercise.description, exercise.muscleGroup, exercise.type, exercise.category]
           );
         }
       }
@@ -45,7 +50,7 @@ export const exerciseRepository = {
     }
   },
 
-  async createExercise(name: string, sessionId: string, description?: string, imageUrl?: string, muscleGroup?: string): Promise<Exercise> {
+  async createExercise(name: string, sessionId: string, description?: string, imageUrl?: string, muscleGroup?: string, type: ExerciseType = 'weight_reps', category: ExerciseCategory = 'Musculation'): Promise<Exercise> {
     try {
       const id = randomUUID();
       const result = await db.getAllAsync<{maxOrder: number}>('SELECT COALESCE(MAX("order"), -1) as maxOrder FROM exercises WHERE sessionId = ?', [sessionId]);
@@ -53,10 +58,10 @@ export const exerciseRepository = {
       const newOrder = maxOrder + 1;
       
       await db.runAsync(
-        'INSERT INTO exercises (id, name, sessionId, "order", description, imageUrl, muscleGroup) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [id, name, sessionId, newOrder, description || null, imageUrl || null, muscleGroup || null]
+        'INSERT INTO exercises (id, name, sessionId, "order", description, imageUrl, muscleGroup, type, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [id, name, sessionId, newOrder, description || null, imageUrl || null, muscleGroup || null, type, category]
       );
-      return { id, name, sessionId, order: newOrder, description, imageUrl, muscleGroup };
+      return { id, name, sessionId, order: newOrder, description, imageUrl, muscleGroup, type, category };
     } catch (error) {
       console.error('Erreur lors de la création de l\'exercice:', error);
       throw error;
@@ -66,8 +71,8 @@ export const exerciseRepository = {
   async createExerciseFromTemplate(templateId: string, sessionId: string): Promise<Exercise> {
     try {
       // Récupérer le template
-      const templates = await db.getAllAsync<{id: string, name: string, description: string, imageUrl: string, muscleGroup: string}>(
-        'SELECT id, name, description, imageUrl, muscleGroup FROM exercise_templates WHERE id = ?',
+      const templates = await db.getAllAsync<{id: string, name: string, description: string, imageUrl: string, muscleGroup: string, type: string, category: string}>(
+        'SELECT id, name, description, imageUrl, muscleGroup, type, category FROM exercise_templates WHERE id = ?',
         [templateId]
       );
       
@@ -83,7 +88,9 @@ export const exerciseRepository = {
         sessionId,
         template.description,
         template.imageUrl,
-        template.muscleGroup
+        template.muscleGroup,
+        template.type as ExerciseType,
+        template.category as ExerciseCategory
       );
     } catch (error) {
       console.error('Erreur lors de la création de l\'exercice à partir du template:', error);

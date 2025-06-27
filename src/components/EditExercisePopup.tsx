@@ -2,17 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import { Image, Modal, Pressable, Text, TextInput, View } from "react-native";
+import { Exercise } from "../storage/exerciseRepository";
 import { editExercisePopupStyles } from "../styles/editExercisePopup";
 import { theme } from "../styles/theme";
-
-interface Exercise {
-  id: string;
-  name: string;
-  sessionId: string;
-  order: number;
-  imageUrl?: string;
-  description?: string;
-}
 
 interface EditExercisePopupProps {
   visible: boolean;

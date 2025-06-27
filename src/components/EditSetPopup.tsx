@@ -1,38 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ExerciseType } from '../storage/exerciseRepository';
 import { theme } from '../styles/theme';
 
 interface EditSetPopupProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (repetitions: number, weight: number) => void;
-  set?: { repetitions: number; weight: number } | null;
+  onSave: (repetitions?: number, weight?: number, duration?: number) => void;
+  set?: { repetitions?: number; weight?: number; duration?: number } | null;
+  exerciseType?: ExerciseType;
 }
 
-const EditSetPopup: React.FC<EditSetPopupProps> = ({ visible, onClose, onSave, set }) => {
+const EditSetPopup: React.FC<EditSetPopupProps> = ({ visible, onClose, onSave, set, exerciseType = 'weight_reps' }) => {
   const [repetitions, setRepetitions] = useState('');
   const [weight, setWeight] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
 
-  // Pré-remplir avec les valeurs du set quand le popup s'ouvre
   useEffect(() => {
     if (visible && set) {
-      setRepetitions(set.repetitions.toString());
-      setWeight(set.weight.toString());
+      if (exerciseType === 'weight_reps') {
+        setRepetitions(set.repetitions?.toString() || '');
+        setWeight(set.weight?.toString() || '');
+        setMinutes('');
+        setSeconds('');
+      } else {
+        const totalSeconds = set.duration || 0;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        setMinutes(mins.toString());
+        setSeconds(secs.toString());
+        setRepetitions('');
+        setWeight('');
+      }
     } else if (visible) {
       setRepetitions('');
       setWeight('');
+      setMinutes('');
+      setSeconds('');
     }
-  }, [visible, set]);
+  }, [visible, set, exerciseType]);
 
   const handleSave = () => {
-    const reps = parseInt(repetitions) || 0;
-    const weightValue = parseFloat(weight) || 0;
-    
-    if (reps <= 0 || weightValue <= 0) {
-      return;
+    if (exerciseType === 'weight_reps') {
+      const reps = parseInt(repetitions) || 0;
+      const weightValue = parseFloat(weight) || 0;
+      
+      if (reps <= 0 || weightValue <= 0) {
+        return;
+      }
+      
+      onSave(reps, weightValue);
+    } else {
+      const mins = parseInt(minutes) || 0;
+      const secs = parseInt(seconds) || 0;
+      const totalSeconds = mins * 60 + secs;
+      
+      if (totalSeconds <= 0) {
+        return;
+      }
+      
+      onSave(undefined, undefined, totalSeconds);
     }
-
-    onSave(reps, weightValue);
     onClose();
   };
 
@@ -40,7 +69,9 @@ const EditSetPopup: React.FC<EditSetPopupProps> = ({ visible, onClose, onSave, s
     onClose();
   };
 
-  const isValid = (parseInt(repetitions) || 0) > 0 && (parseFloat(weight) || 0) > 0;
+  const isValid = exerciseType === 'weight_reps' 
+    ? (parseInt(repetitions) || 0) > 0 && (parseFloat(weight) || 0) > 0
+    : (parseInt(minutes) || 0) > 0 || (parseInt(seconds) || 0) > 0;
 
   return (
     <Modal
@@ -54,35 +85,72 @@ const EditSetPopup: React.FC<EditSetPopupProps> = ({ visible, onClose, onSave, s
           <Text style={styles.title}>Modifier le set</Text>
           
           <View style={styles.content}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Répétitions</Text>
-              <TextInput
-                style={styles.input}
-                value={repetitions}
-                onChangeText={setRepetitions}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#666"
-              />
-            </View>
+            {exerciseType === 'weight_reps' ? (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Répétitions</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={repetitions}
+                    onChangeText={setRepetitions}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#666"
+                  />
+                </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Poids (kg)</Text>
-              <TextInput
-                style={styles.input}
-                value={weight}
-                onChangeText={(value) => {
-                  // Permettre seulement les nombres avec max 1 décimale
-                  const regex = /^\d*\.?\d{0,1}$/;
-                  if (regex.test(value) || value === '') {
-                    setWeight(value);
-                  }
-                }}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor="#666"
-              />
-            </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Poids (kg)</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={weight}
+                    onChangeText={(value) => {
+                      // Permettre seulement les nombres avec max 1 décimale
+                      const regex = /^\d*\.?\d{0,1}$/;
+                      if (regex.test(value) || value === '') {
+                        setWeight(value);
+                      }
+                    }}
+                    keyboardType="numeric"
+                    placeholder="0"
+                    placeholderTextColor="#666"
+                  />
+                </View>
+              </>
+            ) : (
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Durée</Text>
+                <View style={styles.durationContainer}>
+                  <View style={styles.timeInputContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      value={minutes}
+                      onChangeText={setMinutes}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#666"
+                    />
+                    <Text style={styles.durationUnit}>min</Text>
+                  </View>
+                  <View style={styles.timeInputContainer}>
+                    <TextInput
+                      style={styles.timeInput}
+                      value={seconds}
+                      onChangeText={(value) => {
+                        const secs = parseInt(value) || 0;
+                        if (secs >= 0 && secs < 60) {
+                          setSeconds(value);
+                        }
+                      }}
+                      keyboardType="numeric"
+                      placeholder="0"
+                      placeholderTextColor="#666"
+                    />
+                    <Text style={styles.durationUnit}>sec</Text>
+                  </View>
+                </View>
+              </View>
+            )}
           </View>
 
           <View style={styles.buttonContainer}>
@@ -141,6 +209,27 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     fontSize: 16,
+  },
+  durationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: 10,
+    fontSize: 16,
+  },
+  durationUnit: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 5,
+    marginRight: 5,
   },
   buttonContainer: {
     flexDirection: 'row',

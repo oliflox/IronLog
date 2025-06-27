@@ -4,8 +4,9 @@ import { db } from "./database";
 export interface ExerciseSet {
   id: string;
   logId: string;
-  repetitions: number;
-  weight: number;
+  repetitions?: number;
+  weight?: number;
+  duration?: number;
   order: number;
 }
 
@@ -88,8 +89,8 @@ export const exerciseLogRepository = {
       for (let i = 0; i < sets.length; i++) {
         const setId = randomUUID();
         await db.runAsync(
-          'INSERT INTO exercise_sets (id, logId, repetitions, weight, "order") VALUES (?, ?, ?, ?, ?)',
-          [setId, logId, sets[i].repetitions, sets[i].weight, i]
+          'INSERT INTO exercise_sets (id, logId, repetitions, weight, duration, "order") VALUES (?, ?, ?, ?, ?, ?)',
+          [setId, logId, sets[i].repetitions || null, sets[i].weight || null, sets[i].duration || null, i]
         );
       }
 
@@ -126,8 +127,8 @@ export const exerciseLogRepository = {
       for (let i = 0; i < sets.length; i++) {
         const setId = randomUUID();
         await db.runAsync(
-          'INSERT INTO exercise_sets (id, logId, repetitions, weight, "order") VALUES (?, ?, ?, ?, ?)',
-          [setId, logId, sets[i].repetitions, sets[i].weight, i]
+          'INSERT INTO exercise_sets (id, logId, repetitions, weight, duration, "order") VALUES (?, ?, ?, ?, ?, ?)',
+          [setId, logId, sets[i].repetitions || null, sets[i].weight || null, sets[i].duration || null, i]
         );
       }
     } catch (error) {
@@ -216,8 +217,8 @@ export const exerciseLogRepository = {
         const newOrder = (maxOrder?.maxOrder || -1) + 1;
         
         await db.runAsync(
-          'INSERT INTO exercise_sets (id, logId, repetitions, weight, "order") VALUES (?, ?, ?, ?, ?)',
-          [setId, existingLog.id, set.repetitions, set.weight, newOrder]
+          'INSERT INTO exercise_sets (id, logId, repetitions, weight, duration, "order") VALUES (?, ?, ?, ?, ?, ?)',
+          [setId, existingLog.id, set.repetitions || null, set.weight || null, set.duration || null, newOrder]
         );
       } else {
         // Créer un nouveau log avec ce set
@@ -297,8 +298,8 @@ export const exerciseLogRepository = {
         for (let i = 0; i < currentSets.length; i++) {
           const setId = randomUUID();
           await db.runAsync(
-            'INSERT INTO exercise_sets (id, logId, repetitions, weight, "order") VALUES (?, ?, ?, ?, ?)',
-            [setId, existingLog.id, currentSets[i].repetitions, currentSets[i].weight, startOrder + i]
+            'INSERT INTO exercise_sets (id, logId, repetitions, weight, duration, "order") VALUES (?, ?, ?, ?, ?, ?)',
+            [setId, existingLog.id, currentSets[i].repetitions || null, currentSets[i].weight || null, currentSets[i].duration || null, startOrder + i]
           );
         }
 
@@ -314,9 +315,10 @@ export const exerciseLogRepository = {
     }
   },
 
-  async updateSet(setId: string, repetitions: number, weight: number): Promise<void> {
+  async updateSet(setId: string, repetitions?: number, weight?: number, duration?: number): Promise<void> {
     try {
-      await db.runAsync('UPDATE exercise_sets SET repetitions = ?, weight = ? WHERE id = ?', [repetitions, weight, setId]);
+      await db.runAsync('UPDATE exercise_sets SET repetitions = ?, weight = ?, duration = ? WHERE id = ?', 
+        [repetitions || null, weight || null, duration || null, setId]);
     } catch (error) {
       console.error('Erreur lors de la modification du set:', error);
       throw error;

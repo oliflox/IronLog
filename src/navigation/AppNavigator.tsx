@@ -28,6 +28,7 @@ export type RootStackParamList = {
       id: string;
       name: string;
       imageUrl?: string;
+      type?: string;
     };
   };
   ExerciseLibrary: { sessionId: string };

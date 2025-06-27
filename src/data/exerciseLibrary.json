@@ -145,45 +145,57 @@
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Extensions de jambes",
-      "muscleGroup": "Jambes",
-      "description": "Exercice pour les quadriceps",
+      "name": "Course à pied",
+      "muscleGroup": "Cardio",
+      "description": "Exercice cardio-vasculaire",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Flexions de jambes",
-      "muscleGroup": "Jambes",
-      "description": "Exercice pour les ischio-jambiers",
+      "name": "Vélo",
+      "muscleGroup": "Cardio",
+      "description": "Exercice cardio-vasculaire",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Extensions mollets",
-      "muscleGroup": "Jambes",
-      "description": "Exercice pour les mollets",
+      "name": "Rameur",
+      "muscleGroup": "Cardio",
+      "description": "Exercice cardio-vasculaire complet",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Crunch",
-      "muscleGroup": "Abdominaux",
-      "description": "Exercice de base pour les abdos",
+      "name": "Elliptique",
+      "muscleGroup": "Cardio",
+      "description": "Exercice cardio-vasculaire",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Corde à sauter",
+      "muscleGroup": "Cardio",
+      "description": "Exercice cardio-vasculaire",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
       "name": "Planche",
-      "muscleGroup": "Abdominaux",
+      "muscleGroup": "Autres",
       "description": "Exercice de gainage",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Relevé de jambes",
-      "muscleGroup": "Abdominaux",
-      "description": "Exercice pour le bas des abdos",
+      "name": "Burpees",
+      "muscleGroup": "Autres",
+      "description": "Exercice fonctionnel complet",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     },
     {
-      "name": "Russian twist",
-      "muscleGroup": "Abdominaux",
-      "description": "Exercice pour les obliques",
+      "name": "Mountain climbers",
+      "muscleGroup": "Autres",
+      "description": "Exercice cardio et gainage",
+      "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
+    },
+    {
+      "name": "Jumping jacks",
+      "muscleGroup": "Autres",
+      "description": "Exercice cardio",
       "imageUrl": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop"
     }
   ]

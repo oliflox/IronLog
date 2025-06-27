@@ -15,7 +15,7 @@ export const useExerciseLogs = (exerciseId: string) => {
     }
   }, [exerciseId]);
 
-  const addSet = useCallback(async (date: string, set: { repetitions: number; weight: number; order: number }) => {
+  const addSet = useCallback(async (date: string, set: { repetitions?: number; weight?: number; duration?: number; order: number }) => {
     try {
       setError(null);
       await exerciseLogRepository.addSetToLog(exerciseId, date, set);
@@ -26,7 +26,7 @@ export const useExerciseLogs = (exerciseId: string) => {
     }
   }, [exerciseId, loadLogs]);
 
-  const createLog = useCallback(async (date: string, sets: { repetitions: number; weight: number; order: number }[]) => {
+  const createLog = useCallback(async (date: string, sets: { repetitions?: number; weight?: number; duration?: number; order: number }[]) => {
     try {
       setError(null);
       await exerciseLogRepository.createLog(exerciseId, date, sets);
@@ -37,13 +37,13 @@ export const useExerciseLogs = (exerciseId: string) => {
     }
   }, [exerciseId, loadLogs]);
 
-  const updateLog = useCallback(async (logId: string, date: string, sets: { repetitions: number; weight: number; order: number }[]) => {
+  const updateLog = useCallback(async (logId: string, date: string, sets: { repetitions?: number; weight?: number; duration?: number; order: number }[]) => {
     try {
       setError(null);
       await exerciseLogRepository.updateLog(logId, date, sets);
       await loadLogs(); // Recharger les logs
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour du log');
+      setError(err instanceof Error ? err.message : 'Erreur lors de la modification du log');
       throw err;
     }
   }, [loadLogs]);
@@ -92,10 +92,10 @@ export const useExerciseLogs = (exerciseId: string) => {
     }
   }, [loadLogs]);
 
-  const updateSet = useCallback(async (setId: string, repetitions: number, weight: number) => {
+  const updateSet = useCallback(async (setId: string, repetitions?: number, weight?: number, duration?: number) => {
     try {
       setError(null);
-      await exerciseLogRepository.updateSet(setId, repetitions, weight);
+      await exerciseLogRepository.updateSet(setId, repetitions, weight, duration);
       await loadLogs(); // Recharger les logs
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la modification du set');

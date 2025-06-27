@@ -1,6 +1,7 @@
 import { randomUUID } from "expo-crypto";
 import exerciseLibrary from "../data/exerciseLibrary.json";
 import { db } from "./database";
+import { ExerciseCategory, ExerciseType } from "./exerciseRepository";
 
 export interface ExerciseTemplate {
   id: string;
@@ -9,36 +10,46 @@ export interface ExerciseTemplate {
   imageUrl?: string;
   description?: string;
   isDefault: boolean;
+  type: ExerciseType;
+  category: ExerciseCategory;
 }
+
+const getExerciseTypeAndCategory = (muscleGroup: string): { type: ExerciseType; category: ExerciseCategory } => {
+  if (muscleGroup === 'Cardio') {
+    return { type: 'time', category: 'Cardio' };
+  } else if (muscleGroup === 'Autres') {
+    return { type: 'time', category: 'Autres' };
+  } else {
+    return { type: 'weight_reps', category: 'Musculation' };
+  }
+};
 
 export const exerciseTemplateRepository = {
   async initializeDefaultTemplates(): Promise<void> {
     try {
-      const result = await db.getAllAsync<ExerciseTemplate>('SELECT * FROM exercise_templates WHERE isDefault = 1');
-
-      if (result.length === 0) {
-        // Charger les exercices depuis le fichier JSON
-        const exercises = exerciseLibrary.exercises;
-        
-        for (const exercise of exercises) {
-          const template = {
-            id: randomUUID(),
-            name: exercise.name,
-            muscleGroup: exercise.muscleGroup,
-            description: exercise.description,
-            imageUrl: exercise.imageUrl,
-            isDefault: 1
-          };
-
+      const existingTemplates = await db.getAllAsync<{ id: string }>('SELECT id FROM exercise_templates WHERE isDefault = 1');
+      
+      if (existingTemplates.length === 0) {
+        for (const exercise of exerciseLibrary.exercises) {
+          const { type, category } = getExerciseTypeAndCategory(exercise.muscleGroup);
+          
           await db.runAsync(
-            'INSERT INTO exercise_templates (id, name, muscleGroup, description, isDefault, imageUrl) VALUES (?, ?, ?, ?, ?, ?)',
-            [template.id, template.name, template.muscleGroup, template.description, template.isDefault, template.imageUrl]
+            'INSERT INTO exercise_templates (id, name, muscleGroup, imageUrl, description, isDefault, type, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+              randomUUID(),
+              exercise.name,
+              exercise.muscleGroup,
+              exercise.imageUrl,
+              exercise.description,
+              1,
+              type,
+              category
+            ]
           );
         }
-        console.log('Templates d\'exercices par défaut initialisés depuis le JSON');
       }
     } catch (error) {
-      console.error('Erreur lors de l\'initialisation des templates d\'exercices:', error);
+      console.error('Erreur lors de l\'initialisation des templates par défaut:', error);
       throw error;
     }
   },
@@ -54,7 +65,10 @@ export const exerciseTemplateRepository = {
 
   async getTemplatesByMuscleGroup(muscleGroup: string): Promise<ExerciseTemplate[]> {
     try {
-      return await db.getAllAsync<ExerciseTemplate>('SELECT * FROM exercise_templates WHERE muscleGroup = ? ORDER BY name', [muscleGroup]);
+      return await db.getAllAsync<ExerciseTemplate>(
+        'SELECT * FROM exercise_templates WHERE muscleGroup = ? ORDER BY name',
+        [muscleGroup]
+      );
     } catch (error) {
       console.error('Erreur lors de la récupération des templates par groupe musculaire:', error);
       throw error;
@@ -63,8 +77,10 @@ export const exerciseTemplateRepository = {
 
   async getMuscleGroups(): Promise<string[]> {
     try {
-      const result = await db.getAllAsync<{muscleGroup: string}>('SELECT DISTINCT muscleGroup FROM exercise_templates ORDER BY muscleGroup');
-      return result.map(r => r.muscleGroup);
+      const groups = await db.getAllAsync<{ muscleGroup: string }>(
+        'SELECT DISTINCT muscleGroup FROM exercise_templates ORDER BY muscleGroup'
+      );
+      return groups.map(g => g.muscleGroup);
     } catch (error) {
       console.error('Erreur lors de la récupération des groupes musculaires:', error);
       throw error;
@@ -74,11 +90,23 @@ export const exerciseTemplateRepository = {
   async createTemplate(name: string, muscleGroup: string, description?: string, imageUrl?: string): Promise<ExerciseTemplate> {
     try {
       const id = randomUUID();
+      const { type, category } = getExerciseTypeAndCategory(muscleGroup);
+      
       await db.runAsync(
-        'INSERT INTO exercise_templates (id, name, muscleGroup, description, imageUrl, isDefault) VALUES (?, ?, ?, ?, ?, ?)',
-        [id, name, muscleGroup, description || null, imageUrl || null, 0]
+        'INSERT INTO exercise_templates (id, name, muscleGroup, description, imageUrl, isDefault, type, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [id, name, muscleGroup, description || null, imageUrl || null, 0, type, category]
       );
-      return { id, name, muscleGroup, description, imageUrl, isDefault: false };
+      
+      return {
+        id,
+        name,
+        muscleGroup,
+        description,
+        imageUrl,
+        isDefault: false,
+        type,
+        category
+      };
     } catch (error) {
       console.error('Erreur lors de la création du template:', error);
       throw error;

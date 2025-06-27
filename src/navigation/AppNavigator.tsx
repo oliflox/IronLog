@@ -114,7 +114,7 @@ const AppNavigator = () => {
       screenOptions={({ route }) => ({
         ...navigationOptions,
         headerRight: () => {
-          if (route.name === 'Calendar') {
+          if (route.name === 'Calendar' || route.name === 'Profil') {
             return null;
           }
           

@@ -1,7 +1,5 @@
 //////////// A Venir ////////////
 
-Calendar page
-profile page
 login + sign up
 Sync avec l'api
 
@@ -15,5 +13,3 @@ liste exercices + ajouter exercice = afficher liste exo pas popup add
 //////////// A Corriger ////////////
 
 When edit mode active deactivate  stack and tab navigation
-Add button workout, 
-EditMode Workout 

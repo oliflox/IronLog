@@ -115,6 +115,36 @@ export const initDatabase = async () => {
     `));
 
     console.log('Table exercise_sets créée avec succès');
+
+    // Créer la table profile
+    await executeWithRetry(() => db.execAsync(`
+      CREATE TABLE IF NOT EXISTS profile (
+        id TEXT PRIMARY KEY,
+        firstName TEXT NOT NULL,
+        lastName TEXT NOT NULL,
+        avatar TEXT,
+        lastWorkout TEXT,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      );
+    `));
+
+    console.log('Table profile créée avec succès');
+
+    // Créer la table measurements
+    await executeWithRetry(() => db.execAsync(`
+      CREATE TABLE IF NOT EXISTS measurements (
+        id TEXT PRIMARY KEY,
+        profileId TEXT NOT NULL,
+        label TEXT NOT NULL,
+        value REAL NOT NULL,
+        unit TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        FOREIGN KEY (profileId) REFERENCES profile (id) ON DELETE CASCADE
+      );
+    `));
+
+    console.log('Table measurements créée avec succès');
     console.log('Initialisation de la base de données terminée avec succès');
   } catch (error) {
     console.error('Erreur lors de l\'initialisation de la base de données:', error);

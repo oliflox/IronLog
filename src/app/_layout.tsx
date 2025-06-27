@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { EditModeProvider } from "../contexts/EditModeContext";
 import { initDatabase } from "../storage/database";
+import { profileRepository } from "../storage/profileRepository";
 import { timerRepository } from "../storage/timerRepository";
 
 export default function RootLayout() {
@@ -11,7 +12,8 @@ export default function RootLayout() {
       try {
         await initDatabase();
         await timerRepository.initializeDefaultTimers();
-        console.log('Base de données et timers initialisés avec succès');
+        await profileRepository.initializeDefaultProfile();
+        console.log('Base de données, timers et profil initialisés avec succès');
       } catch (error) {
         console.error('Erreur lors de l\'initialisation:', error);
       }

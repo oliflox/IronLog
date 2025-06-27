@@ -377,4 +377,101 @@ export const exerciseLogRepository = {
       throw error;
     }
   },
+
+  async getWeeklyStats(): Promise<{ reps: number; weight: number; workouts: number; duration: string }> {
+    try {
+      // Calculer le début de la semaine (lundi)
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 0 = dimanche
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - daysToMonday);
+      monday.setHours(0, 0, 0, 0);
+
+      const startOfWeek = monday.toISOString().split('T')[0];
+      const endOfWeek = today.toISOString().split('T')[0];
+
+      // Récupérer tous les logs de la semaine
+      const logs = await db.getAllAsync<{ id: string; exerciseId: string; date: string }>(
+        'SELECT * FROM exercise_logs WHERE date BETWEEN ? AND ?',
+        [startOfWeek, endOfWeek]
+      );
+
+      let totalReps = 0;
+      let totalWeight = 0;
+      const uniqueDates = new Set<string>();
+
+      for (const log of logs) {
+        uniqueDates.add(log.date);
+        const sets = await db.getAllAsync<{ repetitions: number; weight: number }>(
+          'SELECT repetitions, weight FROM exercise_sets WHERE logId = ?',
+          [log.id]
+        );
+
+        for (const set of sets) {
+          totalReps += set.repetitions;
+          totalWeight += set.repetitions * set.weight;
+        }
+      }
+
+      // Calculer la durée (estimation basée sur le nombre de séances)
+      const workouts = uniqueDates.size;
+      const estimatedDurationMinutes = workouts * 90; // 1h30 par séance en moyenne
+      const hours = Math.floor(estimatedDurationMinutes / 60);
+      const minutes = estimatedDurationMinutes % 60;
+      const duration = `${hours}h ${minutes}m`;
+
+      return {
+        reps: totalReps,
+        weight: Math.round(totalWeight),
+        workouts,
+        duration
+      };
+    } catch (error) {
+      console.error('Erreur lors du calcul des statistiques hebdomadaires:', error);
+      throw error;
+    }
+  },
+
+  async getTopExercises(limit: number = 3): Promise<{ name: string; record: string }[]> {
+    try {
+      // Récupérer les exercices avec leurs poids maximum
+      const exercises = await db.getAllAsync<{ exerciseId: string; exerciseName: string; maxWeight: number }>(
+        `SELECT 
+          e.id as exerciseId,
+          e.name as exerciseName,
+          MAX(es.weight) as maxWeight
+        FROM exercises e
+        LEFT JOIN exercise_logs el ON e.id = el.exerciseId
+        LEFT JOIN exercise_sets es ON el.id = es.logId
+        WHERE es.weight IS NOT NULL
+        GROUP BY e.id, e.name
+        HAVING maxWeight > 0
+        ORDER BY maxWeight DESC
+        LIMIT ?`,
+        [limit]
+      );
+
+      return exercises.map(ex => ({
+        name: ex.exerciseName,
+        record: `${ex.maxWeight}kg`
+      }));
+    } catch (error) {
+      console.error('Erreur lors de la récupération des exercices principaux:', error);
+      throw error;
+    }
+  },
+
+  async getLastWorkoutDate(): Promise<string | null> {
+    try {
+      const lastLog = await db.getFirstAsync<{ date: string }>(
+        'SELECT date FROM exercise_logs ORDER BY date DESC LIMIT 1'
+      );
+
+      return lastLog?.date || null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la date du dernier entraînement:', error);
+      throw error;
+    }
+  }
 }; 

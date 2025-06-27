@@ -22,8 +22,11 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
   // Recharger les exercices quand l'écran revient au focus
   useFocusEffect(
     useCallback(() => {
-      loadExercises();
-    }, [loadExercises])
+      const refreshExercises = async () => {
+        await loadExercises();
+      };
+      refreshExercises();
+    }, [sessionId])
   );
   
   const handleItemPress = (item: Exercise) => {
@@ -61,7 +64,7 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
 
   const handleAddButtonPress = () => {
     // Naviguer vers la bibliothèque d'exercices
-    navigation.navigate("ExerciseLibrary", { sessionId });
+    navigation.push("ExerciseLibrary", { sessionId });
   };
 
   if (error) {

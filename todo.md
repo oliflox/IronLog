@@ -7,8 +7,6 @@ Sync avec l'api au chargement, quand ? a chaque requete ? modifs ? et verif a ch
 //////////// A Refaire ////////////
 
 Tout les popUp a globaliser >  add/edit/suppr button/popUp, 
-liste exercices + ajouter exercice = afficher liste exo a part, pas popup add
-
 
 //////////// A Corriger ////////////
 

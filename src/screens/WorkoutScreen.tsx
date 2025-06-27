@@ -9,7 +9,7 @@ import { useWorkoutManager } from "../hooks/useWorkoutManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Workout } from "../storage/workoutRepository";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
+type Props = NativeStackScreenProps<RootStackParamList, "WorkoutHome">;
 
 const WorkoutScreen = ({ navigation }: Props) => {
   const { editMode } = useEditMode();

@@ -18,7 +18,7 @@ import { theme } from "../styles/theme";
 
 export type RootStackParamList = {
   MainTabs: undefined;
-  Workout: { refresh?: boolean };
+  WorkoutHome: { refresh?: boolean };
   WorkoutSessions: { programId: string };
   WorkoutExercises: { 
     sessionId: string;
@@ -55,7 +55,7 @@ const WorkoutStack = () => {
       screenOptions={({ navigation, route }) => ({
         ...navigationOptions,
         headerLeft: () => {
-          if (route.name === 'Workout') {
+          if (route.name === 'WorkoutHome') {
             return null;
           }
           
@@ -77,7 +77,7 @@ const WorkoutStack = () => {
       })}
     >
       <Stack.Screen
-        name="Workout"
+        name="WorkoutHome"
         component={WorkoutScreen}
         options={{
           headerShown: true,
@@ -127,10 +127,17 @@ const MainStack = () => {
       <Stack.Screen
         name="ExerciseLibrary"
         component={ExerciseLibraryScreen}
-        options={{
+        options={({ navigation }) => ({
           headerShown: true,
           headerTitle: "Bibliothèque d'exercices",
-        }}
+          presentation: "modal",
+          animation: "slide_from_bottom",
+          headerLeft: () => (
+            <Pressable onPress={() => navigation.goBack()}>
+              <Ionicons style={navigationStyles.backButton} name="chevron-back" />
+            </Pressable>
+          ),
+        })}
       />
     </Stack.Navigator>
   );

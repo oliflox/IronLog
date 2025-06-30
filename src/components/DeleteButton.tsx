@@ -1,23 +1,24 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { theme } from '../styles/theme';
+import IconButton from './IconButton';
 
 interface DeleteButtonProps {
   onDelete: () => void;
 }
 
-const DeleteButton: React.FC<DeleteButtonProps> = ({ onDelete }) => {
-  return (
-    <Pressable style={styles.button} onPress={onDelete}>
-      <Ionicons name="trash" size={20} color={theme.colors.error} />
-    </Pressable>
-  );
-};
+const DeleteButton: React.FC<DeleteButtonProps> = ({ onDelete }) => (
+  <IconButton
+    icon="trash"
+    size={20}
+    color={theme.colors.error}
+    onPress={onDelete}
+    style={styles.button}
+  />
+);
 
 const styles = StyleSheet.create({
   button: {
-    padding: 8,
     marginLeft: 8,
   },
 });

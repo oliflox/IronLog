@@ -1,9 +1,9 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import EditSessionPopup from "../components/EditSessionPopup";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
+import NamePopup from "../components/NamePopup";
 import { useEditMode } from "../contexts/EditModeContext";
 import { useSessionManager } from "../hooks/useSessionManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -40,8 +40,10 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
     setSelectedSession(null);
   };
 
-  const handleSaveSession = (updatedSession: Session) => {
-    updateSession(updatedSession);
+  const handleSaveSessionName = (newName: string) => {
+    if (!selectedSession) return;
+    updateSession({ ...selectedSession, name: newName });
+    setEditPopupVisible(false);
   };
 
   if (error) {
@@ -68,11 +70,13 @@ const WorkoutSessionsScreen = ({ route, navigation }: Props) => {
         onRefresh={loadSessions}
         sessionWorkoutId={programId}
       />
-      <EditSessionPopup
+      <NamePopup
         visible={editPopupVisible}
-        session={selectedSession}
+        title="Modifier la session"
+        confirmLabel="Enregistrer"
+        initialValue={selectedSession?.name}
         onClose={handleCloseEditPopup}
-        onSave={handleSaveSession}
+        onConfirm={handleSaveSessionName}
       />
     </>
   );

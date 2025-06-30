@@ -6,11 +6,10 @@ import { useSessionManager } from '../hooks/useSessionManager';
 import { useTimerManager } from '../hooks/useTimerManager';
 import { useWorkoutManager } from '../hooks/useWorkoutManager';
 import { theme } from '../styles/theme';
-import AddExercisePopup from './AddExercisePopup';
-import AddSessionPopup from './AddSessionPopup';
-import AddTimerPopup from './AddTimerPopup';
-import AddWorkoutPopup from './AddWorkoutPopup';
+import ExercisePopup from './ExercisePopup';
 import GlobalPopup from './GlobalPopup';
+import NamePopup from './NamePopup';
+import TimerPopup from './TimerPopup';
 
 type ActionType = 'workout' | 'session' | 'exercise' | 'timer' | 'calendar' | 'profile';
 
@@ -139,9 +138,9 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
     }
   };
 
-  const handleAddTimer = async (name: string, duration: number) => {
+  const handleAddTimer = async (duration: number) => {
     try {
-      await createTimer(name, duration);
+      await createTimer(duration);
       setIsAddTimerVisible(false);
       onRefresh?.();
     } catch (error) {
@@ -166,25 +165,33 @@ const GlobalAddButton: React.FC<GlobalAddButtonProps> = ({
         onClose={() => setIsPopupVisible(false)}
       />
       
-      <AddWorkoutPopup
+      {/* Ajout Workout */}
+      <NamePopup
         visible={isAddWorkoutVisible}
+        title="Ajouter un workout"
+        confirmLabel="Ajouter"
         onClose={() => setIsAddWorkoutVisible(false)}
-        onAdd={handleAddWorkout}
+        onConfirm={handleAddWorkout}
       />
-      
-      <AddSessionPopup
+
+      {/* Ajout Session */}
+      <NamePopup
         visible={isAddSessionVisible}
+        title="Ajouter une session"
+        confirmLabel="Ajouter"
         onClose={() => setIsAddSessionVisible(false)}
-        onAdd={handleAddSession}
+        onConfirm={handleAddSession}
       />
-      
-      <AddExercisePopup
+
+      {/* Ajout Exercice */}
+      <ExercisePopup
         visible={isAddExerciseVisible}
         onClose={() => setIsAddExerciseVisible(false)}
         onAdd={handleAddExercise}
       />
-      
-      <AddTimerPopup
+
+      {/* Ajout Timer */}
+      <TimerPopup
         visible={isAddTimerVisible}
         onClose={() => setIsAddTimerVisible(false)}
         onAdd={handleAddTimer}

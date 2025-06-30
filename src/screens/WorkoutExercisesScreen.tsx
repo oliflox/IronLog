@@ -2,8 +2,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useCallback, useState } from "react";
 import { Text, View } from "react-native";
-import EditExercisePopup from "../components/EditExercisePopup";
 import ExerciseList from "../components/ExerciseList";
+import ExercisePopup from "../components/ExercisePopup";
 import GlobalAddButton from "../components/GlobalAddButton";
 import { useEditMode } from "../contexts/EditModeContext";
 import { useExerciseManager } from "../hooks/useExerciseManager";
@@ -92,7 +92,7 @@ const WorkoutExercisesScreen = ({ route, navigation }: Props) => {
         actionType="exercise"
         onPress={handleAddButtonPress}
       />
-      <EditExercisePopup
+      <ExercisePopup
         visible={editPopupVisible}
         exercise={selectedExerciseForEdit}
         onClose={handleCloseEditPopup}

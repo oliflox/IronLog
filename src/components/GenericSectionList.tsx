@@ -22,7 +22,9 @@ interface Section {
   log?: any; // Pour les actions CRUD
 }
 
-interface GenericSectionListProps {
+interface EmptyProps { emptyText?: string; }
+
+interface GenericSectionListProps extends EmptyProps {
   sections: Section[];
   headerImage?: string;
   headerTitle?: string;
@@ -48,6 +50,7 @@ const GenericSectionList: React.FC<GenericSectionListProps> = React.memo(({
   onSetDelete,
   onDateEdit,
   exerciseType,
+  emptyText = 'Aucune donnée',
 }) => {
   const renderItem = ({ item }: { item: SectionItem }) => {
     const formatDuration = (seconds: number) => {
@@ -165,6 +168,11 @@ const GenericSectionList: React.FC<GenericSectionListProps> = React.memo(({
       ListHeaderComponent={renderHeader}
       keyExtractor={(item) => item.id}
       stickySectionHeadersEnabled
+      ListEmptyComponent={() => (
+        <View style={{ padding: 20, alignItems: 'center' }}>
+          <Text style={{ color: '#666' }}>{emptyText}</Text>
+        </View>
+      )}
       style={sectionListStyles.listContainer}
     />
   );

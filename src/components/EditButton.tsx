@@ -1,23 +1,24 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { theme } from '../styles/theme';
+import IconButton from './IconButton';
 
 interface EditButtonProps {
   onPress: () => void;
 }
 
-const EditButton: React.FC<EditButtonProps> = ({ onPress }) => {
-  return (
-    <Pressable style={styles.button} onPress={onPress}>
-      <Ionicons name="pencil" size={24} color={theme.colors.primary} />
-    </Pressable>
-  );
-};
+const EditButton: React.FC<EditButtonProps> = ({ onPress }) => (
+  <IconButton
+    icon="pencil"
+    size={24}
+    color={theme.colors.primary}
+    onPress={onPress}
+    style={styles.button}
+  />
+);
 
 const styles = StyleSheet.create({
   button: {
-    padding: 8,
     marginRight: 8,
   },
 });

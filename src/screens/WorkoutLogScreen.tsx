@@ -259,12 +259,6 @@ const WorkoutLogScreen: React.FC<WorkoutLogScreenProps> = () => {
         exerciseType={exerciseType}
       />
 
-      {logs.length === 0 && (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Aucun log trouvé</Text>
-        </View>
-      )}
-
       <Pressable
         onPress={() => setShowAddPopup(true)}
         style={styles.fab}
@@ -343,17 +337,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 20,
   },
   fab: {
     position: 'absolute',

@@ -2,15 +2,17 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator
+    RenderItemParams,
+    ScaleDecorator
 } from "react-native-draggable-flatlist";
 import { Exercise } from "../storage/exerciseRepository";
 import { theme } from "../styles/theme";
 import { workoutStyles } from "../styles/workout";
 import DeleteButton from "./DeleteButton";
 
-interface ExerciseListProps {
+interface EmptyProps { emptyText?: string; }
+
+interface ExerciseListProps extends EmptyProps {
   data: Exercise[];
   onItemPress?: (item: Exercise) => void;
   title?: string;
@@ -30,6 +32,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
   onUpdateItem,
   editMode = false,
   showEditButton = true,
+  emptyText = 'Aucune donnée',
 }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Exercise>) => {
     const firstLetter = item.name.charAt(0).toUpperCase();
@@ -117,6 +120,11 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         onDragEnd={({ data }) => onReorderItems?.(data)}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        ListEmptyComponent={() => (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#666' }}>{emptyText}</Text>
+          </View>
+        )}
       />
     </View>
   );

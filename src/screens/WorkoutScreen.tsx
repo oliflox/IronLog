@@ -1,9 +1,9 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
-import EditWorkoutPopup from "../components/EditWorkoutPopup";
 import GenericFlatList from "../components/GenericFlatList";
 import GlobalAddButton from "../components/GlobalAddButton";
+import NamePopup from "../components/NamePopup";
 import { useEditMode } from "../contexts/EditModeContext";
 import { useWorkoutManager } from "../hooks/useWorkoutManager";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -39,8 +39,10 @@ const WorkoutScreen = ({ navigation }: Props) => {
     setSelectedWorkout(null);
   };
 
-  const handleSaveWorkout = (updatedWorkout: Workout) => {
-    updateWorkout(updatedWorkout);
+  const handleSaveWorkoutName = (newName: string) => {
+    if (!selectedWorkout) return;
+    updateWorkout({ ...selectedWorkout, name: newName });
+    setEditPopupVisible(false);
   };
 
   if (error) {
@@ -66,11 +68,13 @@ const WorkoutScreen = ({ navigation }: Props) => {
         actionType="workout"
         onRefresh={loadWorkouts} 
       />
-      <EditWorkoutPopup
+      <NamePopup
         visible={editPopupVisible}
-        workout={selectedWorkout}
+        title="Modifier le workout"
+        confirmLabel="Enregistrer"
+        initialValue={selectedWorkout?.name}
         onClose={handleCloseEditPopup}
-        onSave={handleSaveWorkout}
+        onConfirm={handleSaveWorkoutName}
       />
     </>
   );

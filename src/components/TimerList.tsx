@@ -2,15 +2,17 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
-    RenderItemParams,
-    ScaleDecorator
+  RenderItemParams,
+  ScaleDecorator
 } from "react-native-draggable-flatlist";
 import { Timer } from "../storage/timerRepository";
 import { theme } from "../styles/theme";
 import { timerStyles } from "../styles/timer";
 import DeleteButton from "./DeleteButton";
 
-interface TimerListProps {
+interface EmptyProps { emptyText?: string; }
+
+interface TimerListProps extends EmptyProps {
   data: Timer[];
   onItemPress?: (item: Timer) => void;
   onDeleteItem?: (itemId: string) => void;
@@ -26,6 +28,7 @@ const TimerList: React.FC<TimerListProps> = ({
   onReorderItems,
   onUpdateItem,
   editMode = false,
+  emptyText = 'Aucune donnée',
 }) => {
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -105,6 +108,11 @@ const TimerList: React.FC<TimerListProps> = ({
         onDragEnd={({ data }) => onReorderItems?.(data)}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        ListEmptyComponent={() => (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#666' }}>{emptyText}</Text>
+          </View>
+        )}
       />
     </View>
   );

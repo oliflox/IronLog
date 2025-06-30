@@ -16,7 +16,11 @@ interface ListItem {
   order?: number;
 }
 
-interface GenericFlatListProps {
+interface EmptyProps {
+  emptyText?: string;
+}
+
+interface GenericFlatListProps extends EmptyProps {
   data: ListItem[];
   onItemPress?: (item: ListItem) => void;
   title?: string;
@@ -34,6 +38,7 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
   onReorderItems,
   onUpdateItem,
   editMode = false,
+  emptyText = 'Aucune donnée',
 }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<ListItem>) => {
     const firstLetter = item.name.charAt(0).toUpperCase();
@@ -116,6 +121,11 @@ const GenericFlatList: React.FC<GenericFlatListProps> = ({
         onDragEnd={({ data }) => onReorderItems?.(data)}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        ListEmptyComponent={() => (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ color: '#666' }}>{emptyText}</Text>
+          </View>
+        )}
       />
     </View>
   );

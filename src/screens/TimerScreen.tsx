@@ -1,10 +1,9 @@
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import AddTimerPopup from "../components/AddTimerPopup";
-import EditTimerPopup from "../components/EditTimerPopup";
 import GlobalAddButton from "../components/GlobalAddButton";
 import TimerList from "../components/TimerList";
+import TimerPopup from "../components/TimerPopup";
 import { useEditMode } from "../contexts/EditModeContext";
 import { useTimerManager } from "../hooks/useTimerManager";
 import { RootTabParamList } from "../navigation/AppNavigator";
@@ -16,9 +15,8 @@ type Props = BottomTabScreenProps<RootTabParamList, 'Timer'>;
 const TimerScreen = ({ navigation }: Props) => {
   const { editMode } = useEditMode();
   const { timers, error, loadTimers, deleteTimer, reorderTimers, updateTimer, createTimer } = useTimerManager();
-  const [editPopupVisible, setEditPopupVisible] = useState(false);
+  const [timerPopupVisible, setTimerPopupVisible] = useState(false);
   const [selectedTimer, setSelectedTimer] = useState<Timer | null>(null);
-  const [addPopupVisible, setAddPopupVisible] = useState(false);
   
   // États pour le timer actif
   const [activeTimer, setActiveTimer] = useState<Timer | null>(null);
@@ -66,11 +64,11 @@ const TimerScreen = ({ navigation }: Props) => {
 
   const handleUpdateTimer = (timer: any) => {
     setSelectedTimer(timer);
-    setEditPopupVisible(true);
+    setTimerPopupVisible(true);
   };
 
-  const handleCloseEditPopup = () => {
-    setEditPopupVisible(false);
+  const handleCloseTimerPopup = () => {
+    setTimerPopupVisible(false);
     setSelectedTimer(null);
   };
 
@@ -96,7 +94,8 @@ const TimerScreen = ({ navigation }: Props) => {
   };
 
   const handleOpenAddPopup = () => {
-    setAddPopupVisible(true);
+    setSelectedTimer(null);
+    setTimerPopupVisible(true);
   };
 
   if (error) {
@@ -139,18 +138,15 @@ const TimerScreen = ({ navigation }: Props) => {
       
       <GlobalAddButton 
         actionType="timer"
+        onPress={handleOpenAddPopup}
         onRefresh={loadTimers} 
       />
-      <EditTimerPopup
-        visible={editPopupVisible}
+      <TimerPopup
+        visible={timerPopupVisible}
         timer={selectedTimer}
-        onClose={handleCloseEditPopup}
-        onSave={handleSaveTimer}
-      />
-      <AddTimerPopup
-        visible={addPopupVisible}
-        onClose={() => setAddPopupVisible(false)}
-        onAdd={handleAddTimer}
+        onClose={handleCloseTimerPopup}
+        onSave={selectedTimer ? handleSaveTimer : undefined}
+        onAdd={!selectedTimer ? handleAddTimer : undefined}
       />
     </View>
   );
